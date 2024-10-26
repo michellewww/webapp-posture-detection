@@ -2,16 +2,25 @@ const MAX_PHOTO_COUNT = 30; // Maximum number of photos to keep in localStorage
 
 let videoStream = null;
 let captureInterval = null;
+let isCameraActive = false; // Track camera status
+
 
 document.getElementById("start-camera").addEventListener("click", startCamera);
 document.getElementById("stop-camera").addEventListener("click", stopCamera);
 
 async function startCamera() {
+  // Prevent starting the camera if it's already active
+  if (isCameraActive) {
+    console.log("Camera is already running.");
+    return;
+  }
   try {
     // Request camera access
     videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
     const video = document.getElementById("video");
     video.srcObject = videoStream;
+    // Set camera status to active
+    isCameraActive = true;
 
     // Set up interval to capture a photo every 10 seconds
     captureInterval = setInterval(() => {
@@ -46,6 +55,8 @@ function stopCamera() {
     captureInterval = null;
     console.log("Capture interval stopped.");
   }
+  // Set camera status to inactive
+  isCameraActive = false;
 }
 
 function captureAndStorePhoto(videoElement) {
