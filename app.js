@@ -1,3 +1,5 @@
+const MAX_PHOTO_COUNT = 30; // Maximum number of photos to keep in localStorage
+
 let videoStream = null;
 let captureInterval = null;
 
@@ -64,23 +66,44 @@ function captureAndStorePhoto(videoElement) {
 
   console.log(`Photo captured and stored with key: photo_${timestamp}`);
 
-  // Display the message in the scrollable container
-  displayMessage(timestamp);
+  // Maintain the local storage size
+  maintainStorageLimit();
+
+  // Display the new photo in the gallery
+  displayStoredPhotos();
 }
 
-function displayMessage(timestamp) {
-  const messageContainer = document.getElementById("message-container");
-  const date = new Date(timestamp);
-  const formattedTime = date.toLocaleTimeString();
+function maintainStorageLimit() {
+  // Get all photo keys from localStorage and sort them by timestamp
+  const photoKeys = Object.keys(localStorage)
+    .filter(key => key.startsWith("photo_"))
+    .sort((a, b) => parseInt(a.split("_")[1]) - parseInt(b.split("_")[1]));
 
-  // Create a new message element with the formatted timestamp and message
-  const messageElement = document.createElement("div");
-  messageElement.className = "message";
-  messageElement.textContent = `${formattedTime} - Good posture! Well done!`;
+  // Remove oldest photos if we exceed the maximum photo count
+  while (photoKeys.length > MAX_PHOTO_COUNT) {
+    const oldestKey = photoKeys.shift(); // Get the oldest key
+    localStorage.removeItem(oldestKey); // Remove the oldest photo
+    console.log(`Removed oldest photo with key: ${oldestKey}`);
+  }
+}
 
-  // Append the message to the message container
-  messageContainer.appendChild(messageElement);
+function displayStoredPhotos() {
+  const gallery = document.getElementById("photo-gallery");
+  gallery.innerHTML = ""; // Clear the gallery before adding images
 
-  // Scroll to the bottom of the container to show the latest message
-  messageContainer.scrollTop = messageContainer.scrollHeight;
+  Object.keys(localStorage).forEach(key => {
+    if (key.startsWith("photo_")) {
+      const photoData = localStorage.getItem(key);
+
+      // Create an image element and set the src to the base64 data
+      const img = document.createElement("img");
+      img.src = photoData;
+      img.alt = `Captured on ${new Date(parseInt(key.split("_")[1])).toLocaleString()}`;
+      img.style.width = "100px"; // Set a width for the images
+      img.style.margin = "5px";
+
+      // Append the image to the gallery
+      gallery.appendChild(img);
+    }
+  });
 }
