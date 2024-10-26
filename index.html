@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Posture Detection App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    #video {
+      width: 100%;
+      max-width: 600px;
+      height: auto;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+    }
+    .buttons {
+      margin-top: 10px;
+    }
+    /* Scrollable message container */
+    #message-container {
+      width: 100%;
+      max-width: 600px;
+      height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      margin-top: 15px;
+      padding: 10px;
+      text-align: left;
+      background-color: #f9f9f9;
+    }
+    /* Individual message styling */
+    .message {
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Posture Detection App</h1>
+  <video id="video" autoplay></video>
+  <div class="buttons">
+    <button id="start-camera">Start Camera</button>
+    <button id="stop-camera">Stop Camera</button>
+  </div>
+  <!-- Scrollable container for messages -->
+  <div id="message-container"></div>
+  <script src="app.js"></script>
+</body>
+</html>
