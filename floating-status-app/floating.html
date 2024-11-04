@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Status Monitor</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: transparent;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    img {
+      width: 100px;
+      height: 100px;
+    }
+  </style>
+</head>
+<body>
+  <img id="status-icon" alt="Status Icon">
+  <script>
+    let good_or_bad = 'good'; // Example status, update dynamically
+    const statusIcon = document.getElementById('status-icon');
+
+    function updateStatusIcon(status) {
+      if (status === 'bad') {
+        statusIcon.src = 'sad-face.png'; // Replace with your image path
+      } else {
+        statusIcon.src = 'good-face.png'; // Replace with your image path
+      }
+    }
+
+    updateStatusIcon(good_or_bad);
+
+    // Example: Toggle status every 5 seconds for demonstration
+    setInterval(() => {
+      good_or_bad = good_or_bad === 'good' ? 'bad' : 'good';
+      updateStatusIcon(good_or_bad);
+    }, 5000);
+  </script>
+</body>
+</html>
