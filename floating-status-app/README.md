@@ -1,3 +1,6 @@
+run the webapp
+do 'npm start'
+
 ## Package the app
 1. Install Electron Packager:
 ```bash
