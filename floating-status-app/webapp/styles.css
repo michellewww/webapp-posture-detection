@@ -88,3 +88,79 @@ body {
   flex-wrap: wrap; /* Ensures images wrap to the next line if they overflow */
   margin-top: 20px;
 }
+
+/* Sign-In Page */
+#sign-in-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+#sign-in-form {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+}
+
+#sign-in-form input, #sign-in-form button {
+  margin: 10px 0;
+  padding: 10px;
+  font-size: 16px;
+}
+
+/* Sidebar */
+#sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 200px;
+  background-color: var(--accent-color);
+  padding-top: 20px;
+}
+
+#sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+#sidebar ul li {
+  margin: 20px 0;
+}
+
+#sidebar ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+/* Main Content Area */
+#main-content {
+  margin-left: 220px;
+  padding: 20px;
+}
+
+/* Settings Page Styling */
+.settings-section {
+  margin-bottom: 20px;
+}
+
+.settings-section h3 {
+  margin-top: 10px;
+  color: var(--body-color);
+}
+
+.settings-section label {
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+#notification-frequency, #user-name, #user-email {
+  margin-top: 5px;
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid var(--body-color);
+}

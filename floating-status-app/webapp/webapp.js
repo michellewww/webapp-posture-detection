@@ -1,3 +1,48 @@
+// Initial setup for settings
+document.getElementById("enable-notifications").checked = JSON.parse(localStorage.getItem("enableNotifications")) || false;
+document.getElementById("notification-frequency").value = localStorage.getItem("notificationFrequency") || "5";
+document.getElementById("user-name").value = localStorage.getItem("userName") || "";
+document.getElementById("user-email").value = localStorage.getItem("userEmail") || "";
+
+
+
+// Show Sign-In page initially and hide main content
+document.getElementById("main-content").style.display = "none";
+document.getElementById("sidebar").style.display = "none";
+
+document.getElementById("sign-in-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  // Assuming a basic validation; replace with actual auth
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  // if (username === "user" && password === "password") {
+  //   document.getElementById("sign-in-page").style.display = "none";
+  //   document.getElementById("main-content").style.display = "block";
+  //   document.getElementById("sidebar").style.display = "block";
+  // } else {
+  //   alert("Invalid credentials");
+  // }
+  document.getElementById("sign-in-page").style.display = "none";
+  document.getElementById("main-content").style.display = "block";
+  document.getElementById("sidebar").style.display = "block";
+});
+
+function showPage(pageId) {
+  // Hide all sections initially
+  document.getElementById("main-content").style.display = "none";
+  document.getElementById("settings-page").style.display = "none";
+  // Display the correct section based on pageId
+  if (pageId === "camera-page") {
+    document.getElementById("main-content").style.display = "block";
+  } else if (pageId === "settings-page") {
+    document.getElementById("settings-page").style.display = "block";
+  }
+}
+
+
+
+
 const MAX_PHOTO_COUNT = 29; // Maximum number of photos to keep
 
 let videoStream = null;
@@ -87,6 +132,24 @@ async function captureAndStorePhoto(videoElement) {
   // Simulate running a model and updating the status
   updateStatus(photoData);
 }
+
+// Event listeners to save settings
+document.getElementById("enable-notifications").addEventListener("change", () => {
+  localStorage.setItem("enableNotifications", document.getElementById("enable-notifications").checked);
+});
+
+document.getElementById("notification-frequency").addEventListener("change", () => {
+  localStorage.setItem("notificationFrequency", document.getElementById("notification-frequency").value);
+});
+
+document.getElementById("user-name").addEventListener("input", () => {
+  localStorage.setItem("userName", document.getElementById("user-name").value);
+});
+
+document.getElementById("user-email").addEventListener("input", () => {
+  localStorage.setItem("userEmail", document.getElementById("user-email").value);
+});
+
 
 function updateStatus(photoData) {
   // Placeholder logic for determining good or bad posture
