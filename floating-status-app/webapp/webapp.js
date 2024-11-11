@@ -49,6 +49,7 @@ function showPage(pageId) {
   
   if (pageId === 'analysis-page') {
     renderPostureChart();
+    renderHourlyPostureChart();
   }
 }
 
@@ -246,6 +247,34 @@ function renderPostureChart() {
     options: {
       scales: {
         x: { title: { display: true, text: 'Days' } },
+        y: { title: { display: true, text: 'Bad Posture Count' } }
+      }
+    }
+  });
+}
+
+
+function renderHourlyPostureChart() {
+  const ctx = document.getElementById("HourlyPostureChart").getContext("2d");
+  const hours = Array.from({ length: 24 }, (_, i) => `${i}:00`); // Labels from 0:00 to 23:00
+  const hourlyBadPostureCounts = Array.from({ length: 24 }, () => Math.floor(Math.random() * 10)); // Example data
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: hours,
+      datasets: [{
+        label: 'Times in Bad Posture (Hourly)',
+        data: hourlyBadPostureCounts,
+        borderWidth: 2,
+        fill: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      scales: {
+        x: { title: { display: true, text: 'Hour of the Day' } },
         y: { title: { display: true, text: 'Bad Posture Count' } }
       }
     }
