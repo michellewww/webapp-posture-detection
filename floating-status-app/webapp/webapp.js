@@ -230,8 +230,15 @@ function updateIcon() {
 
 function renderPostureChart() {
   const ctx = document.getElementById("PostureChart").getContext("2d");
-  const days = [...Array(30).keys()].map(i => `Day ${i + 1}`); // Example day labels
+  
   const badPostureCounts = Array.from({length: 30}, () => Math.floor(Math.random() * 10)); // Replace with actual data
+
+  // Generate dates for the past 30 days
+  const days = Array.from({ length: 30 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (29 - i)); // Go back 29 to 0 days
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  });
 
   new Chart(ctx, {
     type: 'line',
