@@ -5,23 +5,23 @@ let floatingWindow;
 
 app.on('ready', () => {
   const { width } = screen.getPrimaryDisplay().workAreaSize;
-  
+
   floatingWindow = new BrowserWindow({
-    width: 150,
-    height: 150,
+    width: 50,
+    height: 50,
     frame: false,
     alwaysOnTop: true,
     transparent: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
+      enableRemoteModule: true,  // Enabling remote module for more flexible access
     },
   });
 
-  floatingWindow.loadFile('floating.html');
-  floatingWindow.setSkipTaskbar(true);
+  floatingWindow.loadFile(path.join(__dirname, 'floating.html'));
+  floatingWindow.webContents.openDevTools(); // Open DevTools for debugging
 
-  // Position window in the top-right corner with padding
   const padding = 10;
   floatingWindow.setPosition(width - 150 - padding, padding);
 });

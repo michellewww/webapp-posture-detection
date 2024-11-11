@@ -6,74 +6,173 @@ document.getElementById("user-email").value = localStorage.getItem("userEmail") 
 
 // Floating icon toggle setup
 const toggleIconSwitch = document.getElementById("toggle-icon");
-toggleIconSwitch.checked = JSON.parse(localStorage.getItem("iconVisible")) !== false; // Default is true if not set
+toggleIconSwitch.checked = JSON.parse(localStorage.getItem("iconVisible")) !== false;
 
-// Function to show or hide the floating icon
 function updateIconVisibility() {
   const iconVisible = toggleIconSwitch.checked;
   const icon = document.getElementById("status-icon");
-  if (icon) {
-    icon.style.display = iconVisible ? "block" : "none";
-  }
+  if (icon) icon.style.display = iconVisible ? "block" : "none";
   localStorage.setItem("iconVisible", iconVisible);
 }
 
-// Listen for toggle switch change
 toggleIconSwitch.addEventListener("change", updateIconVisibility);
 
-// Initialize icon visibility on load
 document.addEventListener("DOMContentLoaded", () => {
   updateIconVisibility();
-  
-  // Attach event listeners for the icon and menu toggle
-  const statusIcon = document.getElementById("status-icon");
-  const menu = document.getElementById("menu");
-  
-  statusIcon.addEventListener("contextmenu", (e) => {
-    e.preventDefault();
-    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-  });
-  
-  document.addEventListener("click", (e) => {
-    if (!menu.contains(e.target) && e.target !== statusIcon) {
-      menu.style.display = 'none';
-    }
-  });
+  updateIcon();
 });
 
-// Hide icon and update switch when "Hide" is clicked in the menu
-function hideIcon() {
-  const icon = document.getElementById("status-icon");
-  if (icon) {
-    icon.style.display = "none";
+let videoStream = null;
+let captureInterval = null;
+let isCameraActive = false;
+const MAX_PHOTO_COUNT = 29;
+
+document.getElementById("start-camera").addEventListener("click", startCamera);
+document.getElementById("stop-camera").addEventListener("click", stopCamera);
+
+async function startCamera() {
+  const CAPTURE_INTERVAL = 5000;
+  if (isCameraActive) return;
+
+  try {
+    videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+    document.getElementById("video").srcObject = videoStream;
+    isCameraActive = true;
+    captureInterval = setInterval(() => {
+      maintainStorageLimit();
+      captureAndStorePhoto(document.getElementById("video"));
+    }, CAPTURE_INTERVAL);
+  } catch (error) {
+    handleCameraError(error);
   }
-  toggleIconSwitch.checked = false; // Update the switch to reflect hidden state
-  localStorage.setItem("iconVisible", false);
 }
 
-// Event listeners to save settings
-document.getElementById("enable-notifications").addEventListener("change", () => {
-  localStorage.setItem("enableNotifications", document.getElementById("enable-notifications").checked);
-});
-
-document.getElementById("notification-frequency").addEventListener("change", () => {
-  localStorage.setItem("notificationFrequency", document.getElementById("notification-frequency").value);
-});
-
-// Sample functions for camera and other features (included from your initial code)
-// document.getElementById("sign-in-form").addEventListener("submit", (e) => {
-//   e.preventDefault();
-//   document.getElementById("sign-in-page").style.display = "none";
-//   document.getElementById("main-content").style.display = "block";
-//   document.getElementById("sidebar").style.display = "block";
-// });
-
-function showPage(pageId) {
-  document.getElementById("main-content").style.display = "none";
-  document.getElementById("settings-page").style.display = "none";
-  if (pageId === "camera-page") {
-    document.getElementById("main-content").style.display = "block";
-  } else if (pageId === "settings-page") {
-    document.getElementById("settings-page").style.display = "block";
+function stopCamera() {
+  if (videoStream) {
+    videoStream.getTracks().forEach(track => track.stop());
+    videoStream = null;
+    document.getElementById("video").srcObject = null;
   }
+  if (captureInterval) clearInterval(captureInterval);
+  isCameraActive = false;
+}
+
+async function captureAndStorePhoto(videoElement) {
+  if (!videoElement.srcObject) return;
+
+  await maintainStorageLimit();
+
+  const canvas = document.createElement("canvas");
+  canvas.width = 320;
+  canvas.height = 240;
+  const context = canvas.getContext("2d");
+  context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+  const photoData = canvas.toDataURL("image/webp", 0.8);
+
+  const db = await openDatabase();
+  const transaction = db.transaction("photos", "readwrite");
+  const store = transaction.objectStore("photos");
+
+  try {
+    const timestamp = Date.now();
+    const photo = { timestamp, data: photoData };
+    store.add(photo);
+    logMessage(`Photo stored in IndexedDB with timestamp: ${timestamp}`);
+  } catch (error) {
+    logMessage("Failed to store photo in IndexedDB: " + error);
+  }
+
+  displayStoredPhotos();
+  updateStatus(photoData);
+}
+
+function updateStatus(photoData) {
+  const good_or_bad = Math.random() > 0.5 ? 'good' : 'bad';
+  localStorage.setItem('good_or_bad', good_or_bad);
+  updateIcon();
+}
+
+async function maintainStorageLimit() {
+  const db = await openDatabase();
+  const transaction = db.transaction("photos", "readwrite");
+  const store = transaction.objectStore("photos");
+  const request = store.getAll();
+
+  request.onsuccess = () => {
+    const photos = request.result;
+    if (photos.length > MAX_PHOTO_COUNT) {
+      const excessCount = photos.length - MAX_PHOTO_COUNT;
+      photos.sort((a, b) => a.timestamp - b.timestamp);
+      for (let i = 0; i < excessCount; i++) {
+        store.delete(photos[i].timestamp);
+      }
+    }
+  };
+}
+
+async function displayStoredPhotos() {
+  const gallery = document.getElementById("photo-gallery");
+  if (!gallery) return;
+  gallery.innerHTML = "";
+
+  const db = await openDatabase();
+  const transaction = db.transaction("photos", "readonly");
+  const store = transaction.objectStore("photos");
+  const request = store.getAll();
+
+  request.onsuccess = () => {
+    const photos = request.result;
+    photos.forEach(photo => {
+      const img = document.createElement("img");
+      img.src = photo.data;
+      img.alt = `Captured on ${new Date(photo.timestamp).toLocaleString()}`;
+      img.style.width = "100px";
+      img.style.margin = "5px";
+      gallery.appendChild(img);
+    });
+  };
+}
+
+function openDatabase() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open("PhotoDatabase", 1);
+
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains("photos")) {
+        db.createObjectStore("photos", { keyPath: "timestamp" });
+      }
+    };
+
+    request.onsuccess = (event) => resolve(event.target.result);
+    request.onerror = (event) => reject(event.target.error);
+  });
+}
+
+function logMessage(message) {
+  const messageContainer = document.getElementById("message-container");
+  if (messageContainer) {
+    const messageElement = document.createElement("p");
+    messageElement.textContent = message;
+    messageContainer.appendChild(messageElement);
+    messageContainer.scrollTop = messageContainer.scrollHeight;
+  }
+}
+
+function handleCameraError(error) {
+  if (error.name === "NotAllowedError") {
+    alert("Camera access was denied. Please enable camera access.");
+  } else if (error.name === "NotFoundError") {
+    alert("No camera found on your device.");
+  } else {
+    alert("Unable to access the webcam: " + error.message);
+  }
+}
+
+function updateIcon() {
+  const status = localStorage.getItem('good_or_bad') || 'good';
+  console.log("webapp");
+  console.log(status);
+  const icon = document.getElementById("status-icon");
+  if (icon) icon.src = status === 'bad' ? 'bad-face.png' : 'good-face.png';
 }

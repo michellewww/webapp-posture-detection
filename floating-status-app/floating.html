@@ -43,28 +43,7 @@
     <button onclick="hideIcon()">Hide</button>
   </div>
 
-  <script>
-    const statusIcon = document.getElementById('status-icon');
-    const menu = document.getElementById('menu');
-    
-    // Toggle menu on right-click
-    statusIcon.addEventListener('contextmenu', (e) => {
-      e.preventDefault();
-      menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-    });
-
-    // Hide icon function
-    function hideIcon() {
-      statusIcon.style.display = 'none';
-      menu.style.display = 'none';
-    }
-
-    // Hide menu on clicking anywhere else
-    document.addEventListener('click', (e) => {
-      if (!menu.contains(e.target) && e.target !== statusIcon) {
-        menu.style.display = 'none';
-      }
-    });
-  </script>
+  <!-- Link to external JavaScript file -->
+  <script src="floating.js"></script>
 </body>
 </html>
