@@ -15,7 +15,7 @@
     <ul>
       <li><a href="#" onclick="showPage('camera-page')">Camera</a></li>
       <li><a href="#" onclick="showPage('settings-page')">Settings</a></li>
-      <li><a href="#" onclick="showPage('status-page')">Status</a></li>
+      <li><a href="#" onclick="showPage('analysis-page')">Analysis</a></li>
     </ul>
   </div>
   <div id="main-content">
@@ -33,11 +33,7 @@
         <button id="start-camera">Start Camera</button>
         <button id="stop-camera">Stop Camera</button>
       </div>
-      <!-- Status Page -->
-      <div id="status-page" style="display: none;">
-        <h2>Status</h2>
-        <p>Status information will be displayed here.</p>
-      </div>
+      
 
       <!-- Scrollable container for messages -->
       <div id="message-container"></div>
@@ -45,6 +41,11 @@
       <div id="photo-gallery"></div>
     </div>
     
+    <!-- Analysis Page -->
+    <div id="analysis-page" style="display: none;">
+      <h2>Analysis</h2>
+      <canvas id="PostureChart"></canvas>
+    </div>
     
     
     <!-- Settings Page -->
@@ -79,6 +80,9 @@
     
   </div> 
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="webapp.js"></script>
+  
+
 </body>
 </html>

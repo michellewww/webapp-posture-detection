@@ -46,6 +46,10 @@ function showPage(pageId) {
   if (selectedPage) {
     selectedPage.style.display = "block";
   }
+  
+  if (pageId === 'analysis-page') {
+    renderPostureChart();
+  }
 }
 
 // Toggle notification frequency dropdown
@@ -220,4 +224,30 @@ function updateIcon() {
   const status = localStorage.getItem('good_or_bad') || 'good';
   const icon = document.getElementById("status-icon");
   if (icon) icon.src = status === 'bad' ? 'bad-face.png' : 'good-face.png';
+}
+
+
+function renderPostureChart() {
+  const ctx = document.getElementById("PostureChart").getContext("2d");
+  const days = [...Array(30).keys()].map(i => `Day ${i + 1}`); // Example day labels
+  const badPostureCounts = Array.from({length: 30}, () => Math.floor(Math.random() * 10)); // Replace with actual data
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: days,
+      datasets: [{
+        label: 'Times in Bad Posture',
+        data: badPostureCounts,
+        borderWidth: 2,
+        fill: false,
+      }]
+    },
+    options: {
+      scales: {
+        x: { title: { display: true, text: 'Days' } },
+        y: { title: { display: true, text: 'Bad Posture Count' } }
+      }
+    }
+  });
 }
