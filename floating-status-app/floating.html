@@ -9,6 +9,7 @@
       margin: 0;
       overflow: hidden;
       background-color: transparent;
+      -webkit-app-region: drag; /* Makes the entire window draggable */
     }
     #status-icon {
       width: 50px;
@@ -17,6 +18,10 @@
       top: 10px;
       right: 10px;
       cursor: pointer;
+      -webkit-app-region: drag; /* Prevents icon from being draggable */
+      /* make it visible on top of other windows */
+      z-index: 100;
+      display: block;
     }
     #menu {
       display: none;
@@ -28,6 +33,7 @@
       border: 1px solid #ccc;
       border-radius: 5px;
       font-size: 14px;
+      -webkit-app-region: no-drag; /* Prevents menu from being draggable */
     }
     #menu button {
       border: none;
@@ -40,7 +46,7 @@
 <body>
   <img id="status-icon" src="good-face.png" alt="Status Icon" />
   <div id="menu">
-    <button onclick="hideIcon()">Hide</button>
+    <button id="hide-button">Hide</button>
   </div>
 
   <!-- Link to external JavaScript file -->
