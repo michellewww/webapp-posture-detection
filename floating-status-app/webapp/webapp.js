@@ -1,8 +1,59 @@
-// Initial setup for settings
-document.getElementById("enable-notifications").checked = JSON.parse(localStorage.getItem("enableNotifications")) || false;
-document.getElementById("notification-frequency").value = localStorage.getItem("notificationFrequency") || "5";
-document.getElementById("user-name").value = localStorage.getItem("userName") || "";
-document.getElementById("user-email").value = localStorage.getItem("userEmail") || "";
+// Load settings from localStorage on page load
+document.addEventListener("DOMContentLoaded", () => {
+  loadSettings();
+  updateIconVisibility();
+  updateIcon();
+});
+
+// Settings
+function loadSettings() {
+  document.getElementById("enable-notifications").checked = JSON.parse(localStorage.getItem("enableNotifications")) || false;
+  document.getElementById("notification-frequency").value = localStorage.getItem("notificationFrequency") || "5";
+  document.getElementById("user-name").value = localStorage.getItem("userName") || "";
+  document.getElementById("user-email").value = localStorage.getItem("userEmail") || "";
+  toggleFrequency();
+}
+
+// Event listeners for settings and camera controls
+document.getElementById("enable-notifications").addEventListener("change", () => {
+  localStorage.setItem("enableNotifications", document.getElementById("enable-notifications").checked);
+  toggleFrequency();
+});
+document.getElementById("notification-frequency").addEventListener("change", () => {
+  localStorage.setItem("notificationFrequency", document.getElementById("notification-frequency").value);
+});
+document.getElementById("user-name").addEventListener("input", () => {
+  localStorage.setItem("userName", document.getElementById("user-name").value);
+});
+document.getElementById("user-email").addEventListener("input", () => {
+  localStorage.setItem("userEmail", document.getElementById("user-email").value);
+});
+
+function showPage(pageId) {
+  // Get all page elements
+  const pages = ["camera-page", "settings-page", "status-page"];
+  
+  // Hide all pages
+  pages.forEach(page => {
+    const element = document.getElementById(page);
+    if (element) {
+      element.style.display = "none";
+    }
+  });
+
+  // Show the selected page
+  const selectedPage = document.getElementById(pageId);
+  if (selectedPage) {
+    selectedPage.style.display = "block";
+  }
+}
+
+// Toggle notification frequency dropdown
+function toggleFrequency() {
+  const checkbox = document.getElementById("enable-notifications");
+  const frequencySection = document.getElementById("frequency-section");
+  frequencySection.style.display = checkbox.checked ? "block" : "none";
+}
 
 // Floating icon toggle setup
 const toggleIconSwitch = document.getElementById("toggle-icon");
@@ -17,11 +68,7 @@ function updateIconVisibility() {
 
 toggleIconSwitch.addEventListener("change", updateIconVisibility);
 
-document.addEventListener("DOMContentLoaded", () => {
-  updateIconVisibility();
-  updateIcon();
-});
-
+// Camera controls
 let videoStream = null;
 let captureInterval = null;
 let isCameraActive = false;
@@ -57,9 +104,9 @@ function stopCamera() {
   isCameraActive = false;
 }
 
+// Photo capture and storage in IndexedDB
 async function captureAndStorePhoto(videoElement) {
   if (!videoElement.srcObject) return;
-
   await maintainStorageLimit();
 
   const canvas = document.createElement("canvas");
@@ -171,8 +218,6 @@ function handleCameraError(error) {
 
 function updateIcon() {
   const status = localStorage.getItem('good_or_bad') || 'good';
-  console.log("webapp");
-  console.log(status);
   const icon = document.getElementById("status-icon");
   if (icon) icon.src = status === 'bad' ? 'bad-face.png' : 'good-face.png';
 }
