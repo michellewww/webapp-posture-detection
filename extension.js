@@ -6,7 +6,7 @@ let isCameraActive = false;
 document.getElementById("start-camera").addEventListener("click", startCamera);
 document.getElementById("stop-camera").addEventListener("click", stopCamera);
 document.getElementById("open-camera-page").addEventListener("click", () => {
-    chrome.tabs.create({ url: chrome.runtime.getURL("index.html") });
+    chrome.tabs.create({ url: chrome.runtime.getURL("./floating-status-app/webapp/index.html") });
   });
 
 async function startCamera() {
