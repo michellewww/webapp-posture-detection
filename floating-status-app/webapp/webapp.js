@@ -114,6 +114,9 @@ async function captureAndStorePhoto(videoElement) {
   if (!videoElement.srcObject) return;
   await maintainStorageLimit();
 
+  // placeholder user id
+  const user_id = "user123"
+
   const canvas = document.createElement("canvas");
   canvas.width = 320;
   canvas.height = 240;
@@ -136,6 +139,14 @@ async function captureAndStorePhoto(videoElement) {
 
   displayStoredPhotos();
   updateStatus(photoData);
+
+  const formattedTimestamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0];
+  const fileName = `sitsmart_${user_id}_${formattedTimestamp}.png`;
+
+  const link = document.createElement("a");
+  link.href = photoData;
+  link.download = fileName;
+  link.click();
 }
 
 function updateStatus(photoData) {
