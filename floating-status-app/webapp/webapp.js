@@ -3,8 +3,39 @@ document.addEventListener("DOMContentLoaded", () => {
   loadSettings();
   updateIconVisibility();
   updateIcon();
+  const userId = "user123";  // Define user_id
+  addUser(userId);
   startBadPostureNotificationCycle();
 });
+
+async function addUser(userId) {
+  try {
+    const response = await fetch(`http://127.0.0.1:5000/sitsmart/api/add_user/${userId}`, {
+      method: 'POST'
+    });
+    const data = await response.json();
+    console.log(data.message);  // Log the response message
+  } catch (error) {
+    console.error("Error adding user:", error);
+  }
+}
+
+async function setIntervalForUser(userId, interval) {
+  try {
+    console.log("Setting interval for user:", userId);
+    const response = await fetch(`http://127.0.0.1:5000/sitsmart/api/interval/${userId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ interval: interval })
+    });
+    const data = await response.json();
+    console.log(data.message);
+  } catch (error) {
+    console.error("Error setting interval:", error);
+  }
+}
 
 // Settings
 function loadSettings() {
@@ -28,9 +59,16 @@ document.getElementById("enable-notifications").addEventListener("change", () =>
   toggleFrequency();
   startBadPostureNotificationCycle();  // Restart notification cycle if setting is changed
 });
-document.getElementById("notification-frequency").addEventListener("change", () => {
-  localStorage.setItem("notificationFrequency", document.getElementById("notification-frequency").value);
-  startBadPostureNotificationCycle();  // Restart notification cycle with new frequency
+document.getElementById("notification-frequency").addEventListener("change", async () => {
+  let frequencyInMinutes = document.getElementById("notification-frequency").value;
+  localStorage.setItem("notificationFrequency", frequencyInMinutes);
+  if (frequencyInMinutes == 0) {
+    frequencyInMinutes = 0.75;
+  }
+
+  // Call the API to update the interval on the backend
+  await setIntervalForUser("user123", frequencyInMinutes * 60);  // Convert minutes to seconds
+  startBadPostureNotificationCycle();
 });
 
 document.getElementById("choose-folder").addEventListener("click", () => {
@@ -45,6 +83,8 @@ document.getElementById("storage-folder").addEventListener("change", (event) => 
     document.getElementById("selected-folder-path").textContent = folderPath; // Update UI
   }
 });
+
+
 
 function showPage(pageId) {
   const pages = ["camera-page", "settings-page", "status-page", "analysis-page"];
@@ -312,6 +352,7 @@ let notificationInterval = null;
 
 // Function to display the system notification
 function displayBadPostureNotification() {
+  console.log("Displaying bad posture notification");
   if (Notification.permission === "granted") {
     new Notification("Bad Posture Detected!", {
       body: "Remember to maintain good posture.",
@@ -333,19 +374,34 @@ function startBadPostureNotificationCycle() {
 
   const frequencyInMinutes = localStorage.getItem("notificationFrequency");
   console.log("Notification frequency:", frequencyInMinutes);
-  let frequency = 5 * 60 * 1000; // Default to 5 minutes
+  let frequency = 45 * 1000; // Default to 45 seconds
   if (frequencyInMinutes == 0) {
-    //30 seoconds
-    console.log("30 seconds");
-    frequency = 30 * 1000;
+    //45 seoconds
+    console.log("45 seconds");
+    frequency = 45 * 1000;
   } else {
     frequency = frequencyInMinutes * 60 * 1000; // Convert minutes to milliseconds
   }
 
-  notificationInterval = setInterval(() => {
-    const postureStatus = localStorage.getItem("good_or_bad");
-    if (postureStatus === "bad") {
-      displayBadPostureNotification();
+  // notificationInterval = setInterval(() => {
+  //   const postureStatus = localStorage.getItem("good_or_bad");
+  //   if (postureStatus === "bad") {
+  //     displayBadPostureNotification();
+  //   }
+  // }, frequency);
+
+  notificationInterval = setInterval(async () => {
+    const userId = "user123";
+    try {
+      console.log("Fetching status...");
+      const response = await fetch(`http://127.0.0.1:5000/sitsmart/api/status/${userId}`);
+      const data = await response.json();
+      console.log("Status fetched:", data.status);
+      if (data.status === "bad") { // TODO: Check if status is bad
+        displayBadPostureNotification();
+      }
+    } catch (error) {
+      console.error("Error fetching status:", error);
     }
   }, frequency);
 }
