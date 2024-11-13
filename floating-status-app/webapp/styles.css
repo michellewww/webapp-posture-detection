@@ -144,9 +144,10 @@ body {
 
 /* Settings Page Styling */
 #settings-page {
-  margin-left: 160px;
-  text-align: left; /* Aligns all text inside to the left */
-  padding-left: 20px; /* Optional: Adds padding to align the content nicely */
+  margin-right: 1000px; /* Adjusts margin */
+  text-align: left; /* Ensures all text inside is aligned to the left */
+  padding: 20px; /* Adds padding around the content */
+  max-width: 600px; /* Optional: limits the width to control alignment */
 }
 
 
