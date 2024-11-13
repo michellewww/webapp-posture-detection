@@ -3,16 +3,13 @@ document.addEventListener("DOMContentLoaded", () => {
   loadSettings();
   updateIconVisibility();
   updateIcon();
-  });
-
-
+  startBadPostureNotificationCycle();
+});
 
 // Settings
 function loadSettings() {
   document.getElementById("enable-notifications").checked = JSON.parse(localStorage.getItem("enableNotifications")) || false;
   document.getElementById("notification-frequency").value = localStorage.getItem("notificationFrequency") || "5";
-  // document.getElementById("user-name").value = localStorage.getItem("userName") || "";
-  // document.getElementById("user-email").value = localStorage.getItem("userEmail") || "";
   const chosenFolderPath = localStorage.getItem("chosenFolderPath") || "No folder selected";
   console.log("Loaded folder path:", chosenFolderPath); // Optional: Display it in the console or on the UI
   toggleFrequency();
@@ -26,12 +23,6 @@ document.getElementById("enable-notifications").addEventListener("change", () =>
 document.getElementById("notification-frequency").addEventListener("change", () => {
   localStorage.setItem("notificationFrequency", document.getElementById("notification-frequency").value);
 });
-// document.getElementById("user-name").addEventListener("input", () => {
-//   localStorage.setItem("userName", document.getElementById("user-name").value);
-// });
-// document.getElementById("user-email").addEventListener("input", () => {
-//   localStorage.setItem("userEmail", document.getElementById("user-email").value);
-// });
 
 document.getElementById("choose-folder").addEventListener("click", () => {
   document.getElementById("storage-folder").click();
@@ -46,15 +37,8 @@ document.getElementById("storage-folder").addEventListener("change", (event) => 
   }
 });
 
-//this line breaks the camera
-//document.getElementById("selected-folder-path").textContent = chosenFolderPath;
-
-
 function showPage(pageId) {
-  // Get all page elements
   const pages = ["camera-page", "settings-page", "status-page"];
-  
-  // Hide all pages
   pages.forEach(page => {
     const element = document.getElementById(page);
     if (element) {
@@ -62,7 +46,6 @@ function showPage(pageId) {
     }
   });
 
-  // Show the selected page
   const selectedPage = document.getElementById(pageId);
   if (selectedPage) {
     selectedPage.style.display = "block";
@@ -135,8 +118,7 @@ async function captureAndStorePhoto(videoElement) {
   if (!videoElement.srcObject) return;
   await maintainStorageLimit();
 
-  // placeholder user id
-  const user_id = "user123"
+  const user_id = "user123";
 
   const canvas = document.createElement("canvas");
   canvas.width = 320;
@@ -256,19 +238,16 @@ function handleCameraError(error) {
 function updateIcon() {
   const status = localStorage.getItem('good_or_bad') || 'good';
   const icon = document.getElementById("status-icon");
-  if (icon) icon.src = status === 'bad' ? 'bad-face.png' : 'good-face.png';
+  if (icon) icon.src = status === 'bad' ? '../sad-face.png' : '../good-face.png';
 }
-
 
 function renderPostureChart() {
   const ctx = document.getElementById("PostureChart").getContext("2d");
-  
-  const badPostureCounts = Array.from({length: 30}, () => Math.floor(Math.random() * 10)); // Replace with actual data
+  const badPostureCounts = Array.from({length: 30}, () => Math.floor(Math.random() * 10));
 
-  // Generate dates for the past 30 days
   const days = Array.from({ length: 30 }, (_, i) => {
     const date = new Date();
-    date.setDate(date.getDate() - (29 - i)); // Go back 29 to 0 days
+    date.setDate(date.getDate() - (29 - i));
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   });
 
@@ -292,11 +271,10 @@ function renderPostureChart() {
   });
 }
 
-
 function renderHourlyPostureChart() {
   const ctx = document.getElementById("HourlyPostureChart").getContext("2d");
-  const hours = Array.from({ length: 24 }, (_, i) => `${i}:00`); // Labels from 0:00 to 23:00
-  const hourlyBadPostureCounts = Array.from({ length: 24 }, () => Math.floor(Math.random() * 10)); // Example data
+  const hours = Array.from({ length: 24 }, (_, i) => `${i}:00`);
+  const hourlyBadPostureCounts = Array.from({ length: 24 }, () => Math.floor(Math.random() * 10));
 
   new Chart(ctx, {
     type: 'line',
@@ -319,3 +297,51 @@ function renderHourlyPostureChart() {
     }
   });
 }
+
+// Notification-related settings
+let notificationInterval = null;
+
+// Function to display the system notification
+function displayBadPostureNotification() {
+  if (Notification.permission === "granted") {
+    new Notification("Bad Posture Detected!", {
+      body: "Remember to maintain good posture.",
+      icon: "../sad-face.png",
+      requireInteraction: true,
+    });
+  }
+}
+
+// Check if notifications are allowed and start notification cycle if permission is granted
+document.addEventListener("DOMContentLoaded", () => {
+  if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+    Notification.requestPermission().then(permission => {
+      if (permission === "granted") {
+        startBadPostureNotificationCycle();
+      }
+    });
+  } else if (Notification.permission === "granted") {
+    startBadPostureNotificationCycle();
+  }
+});
+
+// Start notification cycle every 5 seconds
+function startBadPostureNotificationCycle() {
+  if (notificationInterval) {
+    clearInterval(notificationInterval);
+  }
+
+  notificationInterval = setInterval(() => {
+    const postureStatus = localStorage.getItem("good_or_bad");
+    if (postureStatus === "bad") {
+      displayBadPostureNotification();
+    }
+  }, 5000);
+}
+
+// Stop notifications when the app is closed
+window.addEventListener("beforeunload", () => {
+  if (notificationInterval) {
+    clearInterval(notificationInterval);
+  }
+});
