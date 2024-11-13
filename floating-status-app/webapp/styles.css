@@ -1,124 +1,43 @@
-/* Root Variables */
 :root {
   --base-color: #fffcf9;
-  --body-color: #2a6f6f;
-  --accent-color: #3fada8;
-  --button-hover-color: #dfd1ee;
-  --dark-oat-color: #f5eee7;
+  --primary-color: #2a6f6f;
+  --secondary-color: #a8c3b5;
+  --accent-color-1: #e17d63;
+  --accent-color-2: #64a9db;
+  --highlight-color: #f4b55e;
+  --neutral-gray: #e0e2e4;
 }
 
-/* Body Styling */
 body {
   font-family: 'Karla', sans-serif;
-  color: var(--body-color);
+  color: var(--primary-color);
   background-color: var(--base-color);
   margin: 0;
-  text-align: center;
   padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
 }
 
-/* Heading */
 h1 {
   font-family: 'Source Sans 3', sans-serif;
   font-weight: 600;
-  color: var(--body-color);
+  color: var(--primary-color);
   margin-bottom: 20px;
 }
 
-/* Video Styling */
-#video {
-  width: 100%;
-  max-width: 600px;
-  height: auto;
-  margin-top: 10px;
-  border: 2px solid var(--dark-oat-color);
-  border-radius: 8px;
-}
-
-/* Button Styling */
-.buttons {
-  margin-top: 15px;
-}
-
-button {
-  font-family: 'Karla', sans-serif;
-  font-size: 16px;
-  color: var(--body-color);
-  background-color: var(--dark-oat-color);
-  border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: var(--accent-color);
-  color: var(--base-color);
-  font-weight: bold;
-}
-
-/* Message Container */
-#message-container {
-  margin: 0 auto; /* Center the element horizontally */
-  width: 100%;
-  max-width: 600px;
-  height: 200px;
-  overflow-y: auto;
-  /* border: 1px solid var(--accent-color); */
-  margin-top: 20px;
-  padding: 10px;
-  background-color: #f5eee7;
-  text-align: left;
-  border-radius: 8px;
-}
-
-/* Center message container along with other content */
-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* Photo Gallery */
-#photo-gallery {
-  display: flex;
-  max-width: 600px;
-  justify-content: center;
-  flex-wrap: wrap; /* Ensures images wrap to the next line if they overflow */
-  margin-top: 20px;
-}
-
-/* Sign-In Page */
-#sign-in-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-}
-
-#sign-in-form {
-  display: flex;
-  flex-direction: column;
-  width: 300px;
-}
-
-#sign-in-form input, #sign-in-form button {
-  margin: 10px 0;
-  padding: 10px;
-  font-size: 16px;
-}
-
-/* Sidebar */
 #sidebar {
   position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 150px;
-  background-color: var(--accent-color);
+  top: 40px;
+  left: 40px;
+  height: 80%;
+  padding: 20px;
+  width: 200px;
+  border-radius: 20px;
+  background-color: var(--secondary-color);
   padding-top: 20px;
+  color: var(--base-color);
 }
 
 #sidebar ul {
@@ -131,63 +50,167 @@ body {
 }
 
 #sidebar ul li a {
-  color: white;
+  color: var(--base-color);
   text-decoration: none;
   font-size: 18px;
-}
-
-/* Main Content Area */
-#main-content {
-  margin-left: 220px;
-  padding: 20px;
-}
-
-/* Settings Page Styling */
-#settings-page {
-  margin-right: 900px; /* Adjusts margin */
-  text-align: left; /* Ensures all text inside is aligned to the left */
-  padding: 20px; /* Adds padding around the content */
-  max-width: 600px; /* Optional: limits the width to control alignment */
-}
-
-
-.settings-section {
-  
-  margin-bottom: 20px;
-}
-
-#settings-page .settings-section h3 {
-  margin-top: 10px;
-  color: var(--body-color);
   font-weight: bold;
+  display: block;
+  padding: 10px;
+  border-radius: 8px;
 }
 
-.settings-section label {
-  
-  font-size: 16px;
-  margin-right: 10px;
+#sidebar ul li a:hover {
+  background-color: var(--primary-color);
+  color: var(--base-color);
+  border-radius: 8px;
 }
 
-#notification-frequency, #user-name, #user-email {
-  margin-top: 5px;
-  padding: 8px;
+/* #main-content {
+  margin-left: 300px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+#video {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  margin-top: 10px;
+  border: 2px solid var(--neutral-gray);
+  border-radius: 8px;
+} */
+/* #main-content {
+  width: 80%;
+  max-width: 900px;
+   padding: 40px; 
+  background-color: var(--base-color);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 0 auto;
+} */
+
+#main-content {
+  width: 200%;  /* Center main content within the remaining space */
+  max-width: 900px;
+  padding: 40px;
+  background-color: var(--base-color);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 0 auto;
+  margin-left: 20px; /* Offset to center within the space left by the sidebar */
+}
+
+
+#left-align-content {
+  width: 200%; 
+  max-width: 900px;
+  padding: 40px;
+  background-color: var(--base-color);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 0 auto;
+  margin-left: 250px;
+}
+
+#landing-component {
+  width: 200%;  /* Center main content within the remaining space */
+  max-width: 900px;
+  padding: 40px;
+  background-color: var(--base-color);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 0 auto;
+  margin-left: 250px; 
+}
+
+
+#video {
+  width: 150%;
+  max-width: 700px;
+  /* aspect-ratio: 16 / 9; */
+  border: 2px solid var(--neutral-gray);
+  border-radius: 20px;
+  margin-top: 20px;
+}
+
+.buttons {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+button {
+  font-family: 'Karla', sans-serif;
   font-size: 16px;
+  color: var(--primary-color);
+  background-color: var(--neutral-gray);
+  border: none;
   border-radius: 5px;
-  border: 1px solid var(--body-color);
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Toggle switch styling */
+button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+button#start-camera:enabled {
+  background-color: var(--secondary-color);
+  color: var(--base-color);
+}
+
+button#stop-camera:enabled {
+  background-color: var(--secondary-color);
+  color: var(--base-color);
+}
+
+#message-container {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 600px;
+  height: 200px;
+  overflow-y: auto;
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--secondary-color);
+  text-align: left;
+  border-radius: 8px;
+}
+
+.icon-toggle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
 .toggle-switch {
   position: relative;
-  display: inline-block;
+  /* display: inline-block; */
+  display: flex;
   width: 50px;
   height: 24px;
-}
-
-.toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
+  justify-content: center;
+  align-items: center;
 }
 
 .slider {
@@ -197,9 +220,9 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
-  transition: 0.4s;
+  background-color: var(--neutral-gray);
   border-radius: 24px;
+  transition: 0.4s;
 }
 
 .slider:before {
@@ -210,12 +233,12 @@ body {
   left: 2px;
   bottom: 2px;
   background-color: white;
-  transition: 0.4s;
   border-radius: 50%;
+  transition: 0.4s;
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: var(--secondary-color);
 }
 
 input:checked + .slider:before {
@@ -223,27 +246,19 @@ input:checked + .slider:before {
 }
 
 
-#analysis-page {
-  display: none;
+/* Settings and Analysis Page Styling */
+#settings-page, #analysis-page {
+  text-align: left;
+  padding: 0px;
+  margin-bottom: 20px;
 }
 
-canvas {
-  width: 100%;
-  max-width: 600px;
-  margin-top: 20px;
+.settings-section h3 {
+  margin-top: 10px;
+  color: var(--primary-color);
+  font-weight: bold;
 }
 
-#PostureChart {
-  width: 90%; /* Increase width */
-  max-width: 800px; /* Set a new maximum width */
-  height: 500px; /* Set a larger height */
-  margin-top: 20px;
+#frequency-section {
+  margin-bottom: 50px;
 }
-
-#HourlyPostureChart {
-  width: 90%;
-  max-width: 800px;
-  height: 300px; /* Reduced height */
-  margin-top: 20px;
-}
-
