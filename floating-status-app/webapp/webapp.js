@@ -10,18 +10,24 @@ document.addEventListener("DOMContentLoaded", () => {
 function loadSettings() {
   document.getElementById("enable-notifications").checked = JSON.parse(localStorage.getItem("enableNotifications")) || false;
   document.getElementById("notification-frequency").value = localStorage.getItem("notificationFrequency") || "5";
-  const chosenFolderPath = localStorage.getItem("chosenFolderPath") || "No folder selected";
-  console.log("Loaded folder path:", chosenFolderPath); // Optional: Display it in the console or on the UI
   toggleFrequency();
+}
+
+// Toggle notification frequency dropdown
+function toggleFrequency() {
+  const checkbox = document.getElementById("enable-notifications");
+  const frequencySection = document.getElementById("frequency-section");
+  frequencySection.style.display = checkbox.checked ? "block" : "none";
 }
 
 // Event listeners for settings and camera controls
 document.getElementById("enable-notifications").addEventListener("change", () => {
   localStorage.setItem("enableNotifications", document.getElementById("enable-notifications").checked);
-  toggleFrequency();
+  startBadPostureNotificationCycle();  // Restart notification cycle if setting is changed
 });
 document.getElementById("notification-frequency").addEventListener("change", () => {
   localStorage.setItem("notificationFrequency", document.getElementById("notification-frequency").value);
+  startBadPostureNotificationCycle();  // Restart notification cycle with new frequency
 });
 
 document.getElementById("choose-folder").addEventListener("click", () => {
@@ -38,10 +44,8 @@ document.getElementById("storage-folder").addEventListener("change", (event) => 
 });
 
 function showPage(pageId) {
-  // Define all possible page IDs
   const pages = ["camera-page", "settings-page", "status-page", "analysis-page"];
   
-  // Hide all pages
   pages.forEach(page => {
     const element = document.getElementById(page);
     if (element) {
@@ -49,25 +53,15 @@ function showPage(pageId) {
     }
   });
 
-  // Show the selected page if it exists in the DOM
   const selectedPage = document.getElementById(pageId);
   if (selectedPage) {
     selectedPage.style.display = "block";
   }
 
-  // Only render analysis charts if the 'analysis-page' is selected
   if (pageId === "analysis-page") {
     renderPostureChart();
     renderHourlyPostureChart();
   }
-}
-
-
-// Toggle notification frequency dropdown
-function toggleFrequency() {
-  const checkbox = document.getElementById("enable-notifications");
-  const frequencySection = document.getElementById("frequency-section");
-  frequencySection.style.display = checkbox.checked ? "block" : "none";
 }
 
 // Floating icon toggle setup
@@ -318,7 +312,32 @@ function displayBadPostureNotification() {
   }
 }
 
-// Check if notifications are allowed and start notification cycle if permission is granted
+// Start notification cycle based on settings
+function startBadPostureNotificationCycle() {
+  if (notificationInterval) {
+    clearInterval(notificationInterval);
+  }
+
+  const notificationsEnabled = JSON.parse(localStorage.getItem("enableNotifications"));
+  if (!notificationsEnabled) return;
+
+  const frequencyInMinutes = parseInt(localStorage.getItem("notificationFrequency"), 10) || 5;
+  if (frequencyInMinutes === 0) {
+    //30 seoconds
+    frequency = 30 * 1000;
+  }
+
+  const frequency = frequencyInMinutes * 60 * 1000; // Convert minutes to milliseconds
+
+  notificationInterval = setInterval(() => {
+    const postureStatus = localStorage.getItem("good_or_bad");
+    if (postureStatus === "bad") {
+      displayBadPostureNotification();
+    }
+  }, frequency);
+}
+
+// Request notification permission and start cycle if granted
 document.addEventListener("DOMContentLoaded", () => {
   if (Notification.permission !== "granted" && Notification.permission !== "denied") {
     Notification.requestPermission().then(permission => {
@@ -330,20 +349,6 @@ document.addEventListener("DOMContentLoaded", () => {
     startBadPostureNotificationCycle();
   }
 });
-
-// Start notification cycle every 5 seconds
-function startBadPostureNotificationCycle() {
-  if (notificationInterval) {
-    clearInterval(notificationInterval);
-  }
-
-  notificationInterval = setInterval(() => {
-    const postureStatus = localStorage.getItem("good_or_bad");
-    if (postureStatus === "bad") {
-      displayBadPostureNotification();
-    }
-  }, 5000);
-}
 
 // Stop notifications when the app is closed
 window.addEventListener("beforeunload", () => {
