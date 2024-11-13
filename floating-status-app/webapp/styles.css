@@ -144,7 +144,7 @@ body {
 
 /* Settings Page Styling */
 #settings-page {
-  margin-right: 1000px; /* Adjusts margin */
+  margin-right: 900px; /* Adjusts margin */
   text-align: left; /* Ensures all text inside is aligned to the left */
   padding: 20px; /* Adds padding around the content */
   max-width: 600px; /* Optional: limits the width to control alignment */
@@ -152,15 +152,18 @@ body {
 
 
 .settings-section {
+  
   margin-bottom: 20px;
 }
 
-.settings-section h3 {
+#settings-page .settings-section h3 {
   margin-top: 10px;
   color: var(--body-color);
+  font-weight: bold;
 }
 
 .settings-section label {
+  
   font-size: 16px;
   margin-right: 10px;
 }
