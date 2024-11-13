@@ -10,6 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
 function loadSettings() {
   document.getElementById("enable-notifications").checked = JSON.parse(localStorage.getItem("enableNotifications")) || false;
   document.getElementById("notification-frequency").value = localStorage.getItem("notificationFrequency") || "5";
+  const chosenFolderPath = localStorage.getItem("chosenFolderPath") || "No folder selected";
+  console.log("Loaded folder path:", chosenFolderPath); // Optional: Display it in the console or on the UI
   toggleFrequency();
 }
 
@@ -23,6 +25,7 @@ function toggleFrequency() {
 // Event listeners for settings and camera controls
 document.getElementById("enable-notifications").addEventListener("change", () => {
   localStorage.setItem("enableNotifications", document.getElementById("enable-notifications").checked);
+  toggleFrequency();
   startBadPostureNotificationCycle();  // Restart notification cycle if setting is changed
 });
 document.getElementById("notification-frequency").addEventListener("change", () => {
@@ -298,6 +301,12 @@ function renderHourlyPostureChart() {
   });
 }
 
+function toggleFrequency() {
+  const checkbox = document.getElementById("enable-notifications");
+  const frequencySection = document.getElementById("frequency-section");
+  frequencySection.style.display = checkbox.checked ? "block" : "none";
+}
+
 // Notification-related settings
 let notificationInterval = null;
 
@@ -314,6 +323,7 @@ function displayBadPostureNotification() {
 
 // Start notification cycle based on settings
 function startBadPostureNotificationCycle() {
+  console.log("Starting notification cycle");
   if (notificationInterval) {
     clearInterval(notificationInterval);
   }
@@ -321,13 +331,16 @@ function startBadPostureNotificationCycle() {
   const notificationsEnabled = JSON.parse(localStorage.getItem("enableNotifications"));
   if (!notificationsEnabled) return;
 
-  const frequencyInMinutes = parseInt(localStorage.getItem("notificationFrequency"), 10) || 5;
-  if (frequencyInMinutes === 0) {
+  const frequencyInMinutes = localStorage.getItem("notificationFrequency");
+  console.log("Notification frequency:", frequencyInMinutes);
+  let frequency = 5 * 60 * 1000; // Default to 5 minutes
+  if (frequencyInMinutes == 0) {
     //30 seoconds
+    console.log("30 seconds");
     frequency = 30 * 1000;
+  } else {
+    frequency = frequencyInMinutes * 60 * 1000; // Convert minutes to milliseconds
   }
-
-  const frequency = frequencyInMinutes * 60 * 1000; // Convert minutes to milliseconds
 
   notificationInterval = setInterval(() => {
     const postureStatus = localStorage.getItem("good_or_bad");
