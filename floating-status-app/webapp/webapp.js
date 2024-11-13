@@ -11,8 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
 function loadSettings() {
   document.getElementById("enable-notifications").checked = JSON.parse(localStorage.getItem("enableNotifications")) || false;
   document.getElementById("notification-frequency").value = localStorage.getItem("notificationFrequency") || "5";
-  document.getElementById("user-name").value = localStorage.getItem("userName") || "";
-  document.getElementById("user-email").value = localStorage.getItem("userEmail") || "";
+  // document.getElementById("user-name").value = localStorage.getItem("userName") || "";
+  // document.getElementById("user-email").value = localStorage.getItem("userEmail") || "";
   const chosenFolderPath = localStorage.getItem("chosenFolderPath") || "No folder selected";
   console.log("Loaded folder path:", chosenFolderPath); // Optional: Display it in the console or on the UI
   toggleFrequency();
@@ -26,12 +26,12 @@ document.getElementById("enable-notifications").addEventListener("change", () =>
 document.getElementById("notification-frequency").addEventListener("change", () => {
   localStorage.setItem("notificationFrequency", document.getElementById("notification-frequency").value);
 });
-document.getElementById("user-name").addEventListener("input", () => {
-  localStorage.setItem("userName", document.getElementById("user-name").value);
-});
-document.getElementById("user-email").addEventListener("input", () => {
-  localStorage.setItem("userEmail", document.getElementById("user-email").value);
-});
+// document.getElementById("user-name").addEventListener("input", () => {
+//   localStorage.setItem("userName", document.getElementById("user-name").value);
+// });
+// document.getElementById("user-email").addEventListener("input", () => {
+//   localStorage.setItem("userEmail", document.getElementById("user-email").value);
+// });
 
 document.getElementById("choose-folder").addEventListener("click", () => {
   document.getElementById("storage-folder").click();
