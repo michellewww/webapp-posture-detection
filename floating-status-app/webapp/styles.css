@@ -143,6 +143,13 @@ body {
 }
 
 /* Settings Page Styling */
+#settings-page {
+  margin-left: 160px;
+  text-align: left; /* Aligns all text inside to the left */
+  padding-left: 20px; /* Optional: Adds padding to align the content nicely */
+}
+
+
 .settings-section {
   margin-bottom: 20px;
 }
