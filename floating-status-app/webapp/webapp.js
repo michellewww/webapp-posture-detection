@@ -38,7 +38,10 @@ document.getElementById("storage-folder").addEventListener("change", (event) => 
 });
 
 function showPage(pageId) {
-  const pages = ["camera-page", "settings-page", "status-page"];
+  // Define all possible page IDs
+  const pages = ["camera-page", "settings-page", "status-page", "analysis-page"];
+  
+  // Hide all pages
   pages.forEach(page => {
     const element = document.getElementById(page);
     if (element) {
@@ -46,16 +49,19 @@ function showPage(pageId) {
     }
   });
 
+  // Show the selected page if it exists in the DOM
   const selectedPage = document.getElementById(pageId);
   if (selectedPage) {
     selectedPage.style.display = "block";
   }
-  
-  if (pageId === 'analysis-page') {
+
+  // Only render analysis charts if the 'analysis-page' is selected
+  if (pageId === "analysis-page") {
     renderPostureChart();
     renderHourlyPostureChart();
   }
 }
+
 
 // Toggle notification frequency dropdown
 function toggleFrequency() {
