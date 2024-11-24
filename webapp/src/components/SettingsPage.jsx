@@ -20,9 +20,9 @@ const SettingsPage = () => {
   };
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold">Settings</h2>
-      <div className="mt-4">
+    <div className='ml-10 mt-10'>
+      <h2 className="text-2xl font-bold text-[#2a6f6f]">Settings</h2>
+      <div className="mt-4 text-[#2a6f6f]">
         <h3 className="font-semibold">Notifications</h3>
         <label>
           <input
@@ -30,7 +30,9 @@ const SettingsPage = () => {
             checked={notificationsEnabled}
             onChange={(e) => toggleNotifications(e.target.checked)}
           />
-          Enable Notifications
+          <span className='ml-2'>
+            Enable Notifications
+          </span>
         </label>
         {notificationsEnabled && (
           <div>

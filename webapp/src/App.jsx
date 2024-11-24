@@ -21,9 +21,9 @@ const App = () => {
   };
 
   return (
-    <div className="flex">
+    <div className="flex h-screen">
       <Sidebar showPage={setCurrentPage} />
-      <main className="ml-64 p-5 flex-1">{renderPage()}</main>
+      <main className="flex-1 p-5 bg-gray-100 overflow-auto">{renderPage()}</main>
     </div>
   );
 };
