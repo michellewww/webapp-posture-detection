@@ -11,7 +11,7 @@ const CameraPage = () => {
   // TODO: change this save logic
   const user_id = "user123";
 
-  // Start the camera
+  /* Web Camera */
   const startCamera = async () => {
     if (isCameraActive) return;
 
@@ -32,7 +32,6 @@ const CameraPage = () => {
     }
   };
 
-  // Stop the camera
   const stopCamera = () => {
     if (videoStream) {
       videoStream.getTracks().forEach((track) => track.stop());
@@ -48,7 +47,6 @@ const CameraPage = () => {
     setIsCameraActive(false);
   };
 
-  // Capture and store photos
   const captureAndStorePhoto = async () => {
     if (!videoRef.current || !videoRef.current.srcObject) return;
 
@@ -82,7 +80,6 @@ const CameraPage = () => {
     // link.click();
   };
 
-  // Handle camera errors
   const handleCameraError = (error) => {
     if (error.name === 'NotAllowedError') {
       alert('Camera access was denied. Please enable camera access.');
@@ -94,6 +91,7 @@ const CameraPage = () => {
   };
 
   // Open IndexedDB database
+  // TODO: change this to use a real database
   const openDatabase = () => {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open('PhotoDatabase', 1);
@@ -116,6 +114,8 @@ const CameraPage = () => {
       stopCamera();
     };
   }, []);
+
+  /* Set up Notification Interval */
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen space-y-6 bg-gray-100 text-[#2a6f6f]">
