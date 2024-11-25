@@ -1,22 +1,18 @@
 import React, { useState } from 'react';
 
-const SettingsPage = () => {
-  const [notificationsEnabled, setNotificationsEnabled] = useState(
-    JSON.parse(localStorage.getItem('enableNotifications')) || false
-  );
-  const [notificationFrequency, setNotificationFrequency] = useState(
-    localStorage.getItem('notificationFrequency') || '5'
-  );
-
+const SettingsPage = ({
+  notificationsEnabled,
+  setNotificationsEnabled,
+  notificationFrequency,
+  setNotificationFrequency,
+}) => {
   const toggleNotifications = (enabled) => {
     setNotificationsEnabled(enabled);
-    localStorage.setItem('enableNotifications', enabled);
   };
 
   const handleFrequencyChange = (event) => {
-    const frequency = event.target.value;
-    setNotificationFrequency(frequency);
-    localStorage.setItem('notificationFrequency', frequency);
+    const selectedValue = parseInt(event.target.value, 10);
+    setNotificationFrequency(selectedValue); // Update frequency in seconds
   };
 
   return (
@@ -42,10 +38,10 @@ const SettingsPage = () => {
               value={notificationFrequency}
               onChange={handleFrequencyChange}
             >
-              <option value="0">Every 45 seconds</option>
-              <option value="1">Every 1 minute</option>
-              <option value="5">Every 5 minutes</option>
-              <option value="30">Every 30 minutes</option>
+              <option value={45}>Every 45 seconds</option>
+              <option value={60}>Every 1 minute</option>
+              <option value={300}>Every 5 minutes</option>
+              <option value={1800}>Every 30 minutes</option>
             </select>
           </div>
         )}
