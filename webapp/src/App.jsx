@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import CameraPage from './components/CameraPage';
 import SettingsPage from './components/SettingsPage';
 import AnalysisPage from './components/AnalysisPage';
-import { getStatus } from './api';
+import { getStatus } from './utils/api';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('camera');
