@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { addUser, removeUser } from '../utils/api';
 
-const CameraPage = () => {
+const CameraPage = ({
+  postureType,
+  setPostureType,
+  activeUser,
+  setActiveUser,
+}) => {
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [status, setStatus] = useState(false); // For status indicator toggle
   const videoRef = useRef(null);
@@ -23,6 +29,13 @@ const CameraPage = () => {
       }
       setIsCameraActive(true);
 
+      try {
+        await addUser(user_id); // Add user to the database
+      } catch (error) {
+        console.error('Failed to add user:', error);
+      }
+      setActiveUser(true); // Set active user
+
       // Set an interval to capture photos
       captureInterval = setInterval(() => {
         captureAndStorePhoto();
@@ -32,7 +45,7 @@ const CameraPage = () => {
     }
   };
 
-  const stopCamera = () => {
+  const stopCamera = async () => {
     if (videoStream) {
       videoStream.getTracks().forEach((track) => track.stop());
       videoStream = null;
@@ -44,6 +57,12 @@ const CameraPage = () => {
       clearInterval(captureInterval);
       captureInterval = null;
     }
+    try {
+      await removeUser(user_id); // Remove user from the database
+    } catch (error) {
+      console.error('Failed to remove user:', error);
+    }
+    setActiveUser(false); // Set active user
     setIsCameraActive(false);
   };
 

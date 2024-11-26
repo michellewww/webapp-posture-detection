@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { setIntervalForUser } from '../utils/api';
 
 const SettingsPage = ({
   notificationsEnabled,
@@ -10,8 +11,13 @@ const SettingsPage = ({
     setNotificationsEnabled(enabled);
   };
 
-  const handleFrequencyChange = (event) => {
+  const handleFrequencyChange = async (event) => {
     const selectedValue = parseInt(event.target.value, 10);
+    try {
+      await setIntervalForUser('user123', selectedValue);
+    } catch (error) {
+      console.error('Error setting interval for user:', error);
+    }
     setNotificationFrequency(selectedValue); // Update frequency in seconds
   };
 

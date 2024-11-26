@@ -54,3 +54,18 @@ export const addUser = async (userId) => {
     throw error;
   }
 };
+
+// 4. Remove User
+export const removeUser = async (userId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/sitsmart/api/delete_user/${userId}`, {
+      method: 'DELETE',
+    });
+    const data = await handleResponse(response);
+    console.log(data.message);
+    return data;
+  } catch (error) {
+    console.error('Error removing user:', error);
+    throw error;
+  }
+};

@@ -9,6 +9,7 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState('camera');
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [notificationFrequency, setNotificationFrequency] = useState(45);
+  const [activeUser, setActiveUser] = useState(false);
   const userId = "user123";
 
   // notification for bad posture
@@ -27,7 +28,7 @@ const App = () => {
       }
     };
 
-    if (notificationsEnabled) {
+    if (notificationsEnabled && activeUser) {
       // Start fetching status at the specified interval
       fetchStatus(); // Fetch immediately
       intervalId = setInterval(fetchStatus, notificationFrequency * 1000); // Convert seconds to milliseconds
@@ -39,19 +40,24 @@ const App = () => {
         clearInterval(intervalId);
       }
     };
-  }, [notificationsEnabled, notificationFrequency, userId]);
+  }, [notificationsEnabled, notificationFrequency, userId, activeUser]);
 
   const renderPage = () => {
     switch (currentPage) {
       case 'camera':
-        return <CameraPage />;
+        return <CameraPage 
+          postureType={postureType}
+          setPostureType={setPostureType}
+          activeUser={activeUser}
+          setActiveUser={setActiveUser}
+        />;
       case 'settings':
         return <SettingsPage
-        notificationsEnabled={notificationsEnabled}
-        setNotificationsEnabled={setNotificationsEnabled}
-        notificationFrequency={notificationFrequency}
-        setNotificationFrequency={setNotificationFrequency}
-      />;
+          notificationsEnabled={notificationsEnabled}
+          setNotificationsEnabled={setNotificationsEnabled}
+          notificationFrequency={notificationFrequency}
+          setNotificationFrequency={setNotificationFrequency}
+        />;
       case 'analysis':
         return <AnalysisPage />;
       default:
