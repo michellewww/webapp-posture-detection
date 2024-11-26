@@ -1,0 +1,35 @@
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    background-color: transparent;
+    height: 100vh; /* Ensures the window covers the content */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #status-icon {
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 100;
+    -webkit-app-region: drag; /* Makes the icon draggable */
+  }
+
+  #menu {
+    display: none;
+    position: fixed;
+    top: 60px;
+    right: 10px;
+    padding: 10px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    -webkit-app-region: drag; /* Prevents dragging on the menu */
+  }
+</style>

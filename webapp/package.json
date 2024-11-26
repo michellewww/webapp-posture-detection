@@ -1,12 +1,13 @@
 {
   "name": "webapp",
   "version": "1.0.0",
-  "description": "sitsmart-webapp",
-  "main": "src/index.jsx",
+  "description": "sitsmart-webapp with floating app",
+  "main": "src/electron/index.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "concurrently \"npm run react-start\" \"npm run electron-start\"",
+    "react-start": "react-scripts start",
+    "electron-start": "wait-on http://localhost:3000 && electron .",
+    "build": "react-scripts build && electron-builder",
     "eject": "react-scripts eject"
   },
   "keywords": [],
@@ -15,6 +16,7 @@
   "dependencies": {
     "autoprefixer": "^10.4.20",
     "chart.js": "^4.4.6",
+    "concurrently": "^9.1.0",
     "postcss": "^8.4.49",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

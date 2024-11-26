@@ -3,6 +3,7 @@ import Sidebar from './components/Sidebar';
 import CameraPage from './components/CameraPage';
 import SettingsPage from './components/SettingsPage';
 import AnalysisPage from './components/AnalysisPage';
+import FloatingApp from './components/FloatingApp';
 import { getStatus } from './utils/api';
 
 const App = () => {
@@ -67,8 +68,18 @@ const App = () => {
 
   return (
     <div className="flex h-screen">
+      {/* Sidebar for navigation */}
       <Sidebar showPage={setCurrentPage} />
+      
+      {/* Main Content */}
       <main className="flex-1 p-5 bg-gray-100 overflow-auto">{renderPage()}</main>
+      
+      {/* Floating App */}
+      <FloatingApp
+        postureType={postureType}
+        setPostureType={setPostureType}
+        notificationsEnabled={notificationsEnabled}
+      />
     </div>
   );
 };
