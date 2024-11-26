@@ -6,14 +6,16 @@ const CameraPage = ({
   setPostureType,
   activeUser,
   setActiveUser,
+ 
 }) => {
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [status, setStatus] = useState(false); // For status indicator toggle
+  const [directoryHandle, setDirectoryHandle] = useState(null);
   const videoRef = useRef(null);
   const CAPTURE_INTERVAL = 5000; // Interval for capturing photos
   let videoStream = null;
   let captureInterval = null;
-  
+
   // TODO: change this save logic
   const user_id = "user123";
 
@@ -66,6 +68,20 @@ const CameraPage = ({
     setIsCameraActive(false);
   };
 
+  const selectDirectory = async () => {
+    if ('showDirectoryPicker' in window) {
+      try {
+        const dirHandle = await window.showDirectoryPicker();
+        setDirectoryHandle(dirHandle);
+        console.log('Directory selected:', dirHandle);
+      } catch (error) {
+        console.error('Directory selection cancelled or failed:', error);
+      }
+    } else {
+      alert('Your browser does not support the File System Access API. Please use a compatible browser.');
+    }
+  };
+
   const captureAndStorePhoto = async () => {
     if (!videoRef.current || !videoRef.current.srcObject) return;
 
@@ -74,29 +90,30 @@ const CameraPage = ({
     canvas.height = 240; // Adjust height
     const context = canvas.getContext('2d');
     context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-    const photoData = canvas.toDataURL('image/webp', 0.8);
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
 
-    try {
-      const db = await openDatabase();
-      const transaction = db.transaction('photos', 'readwrite');
-      const store = transaction.objectStore('photos');
-      const timestamp = Date.now();
-      const photo = { timestamp, data: photoData };
+    if (directoryHandle) {
+      try {
+        const formattedTimestamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0];
+        const fileName = `sitsmart_${user_id}_${formattedTimestamp}.png`;
+        const fileHandle = await directoryHandle.getFileHandle(fileName, { create: true });
+        const writable = await fileHandle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        console.log(`Photo saved to ${fileName}`);
+      } catch (error) {
+        console.error('Failed to save photo to directory:', error);
+      }
+    } else {
+      // Fallback: Download the file using a link
+      const formattedTimestamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0];
+      const fileName = `sitsmart_${user_id}_${formattedTimestamp}.png`;
 
-      store.add(photo);
-      console.log(`Photo stored in IndexedDB with timestamp: ${timestamp}`);
-    } catch (error) {
-      console.error('Failed to store photo in IndexedDB:', error);
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName;
+      link.click();
     }
-
-    //TODO: replace this with database storage
-    // const formattedTimestamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0];
-    // const fileName = `sitsmart_${user_id}_${formattedTimestamp}.png`;
-
-    // const link = document.createElement("a");
-    // link.href = photoData;
-    // link.download = fileName;
-    // link.click();
   };
 
   const handleCameraError = (error) => {
@@ -109,32 +126,12 @@ const CameraPage = ({
     }
   };
 
-  // Open IndexedDB database
-  // TODO: change this to use a real database
-  const openDatabase = () => {
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.open('PhotoDatabase', 1);
-
-      request.onupgradeneeded = (event) => {
-        const db = event.target.result;
-        if (!db.objectStoreNames.contains('photos')) {
-          db.createObjectStore('photos', { keyPath: 'timestamp' });
-        }
-      };
-
-      request.onsuccess = (event) => resolve(event.target.result);
-      request.onerror = (event) => reject(event.target.error);
-    });
-  };
-
   // Clean up on unmount
   useEffect(() => {
     return () => {
       stopCamera();
     };
   }, []);
-
-  /* Set up Notification Interval */
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen space-y-6 bg-gray-100 text-[#2a6f6f]">
@@ -160,6 +157,17 @@ const CameraPage = ({
         className="w-[640px] h-[480px] border-2 border-gray-300 rounded-lg flex items-center justify-center bg-white"
       >
         <video ref={videoRef} className="w-full h-full rounded-lg" autoPlay playsInline />
+      </div>
+
+      {/* Directory Selection */}
+      <div className="flex items-center gap-4">
+        <button
+          onClick={selectDirectory}
+          className={`px-4 py-2 rounded bg-blue-500 text-white`}
+        >
+          {directoryHandle ? 'Change Directory' : 'Select Directory'}
+        </button>
+        {directoryHandle && <span>Directory Selected</span>}
       </div>
 
       {/* Control Buttons */}
