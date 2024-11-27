@@ -72,6 +72,14 @@ const CameraPage = ({
     if ('showDirectoryPicker' in window) {
       try {
         const dirHandle = await window.showDirectoryPicker();
+        // Check permissions
+        const permission = await dirHandle.queryPermission({ mode: 'readwrite' });
+        if (permission !== 'granted') {
+          const requestPermission = await dirHandle.requestPermission({ mode: 'readwrite' });
+          if (requestPermission !== 'granted') {
+            throw new Error('Write permission not granted');
+          }
+        }
         setDirectoryHandle(dirHandle);
         console.log('Directory selected:', dirHandle);
       } catch (error) {
@@ -81,40 +89,44 @@ const CameraPage = ({
       alert('Your browser does not support the File System Access API. Please use a compatible browser.');
     }
   };
+  
 
   const captureAndStorePhoto = async () => {
     if (!videoRef.current || !videoRef.current.srcObject) return;
-
+  
     const canvas = document.createElement('canvas');
     canvas.width = 320; // Adjust width
     canvas.height = 240; // Adjust height
     const context = canvas.getContext('2d');
     context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
     const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
-
+  
     if (directoryHandle) {
       try {
         const formattedTimestamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0];
         const fileName = `sitsmart_${user_id}_${formattedTimestamp}.png`;
+        
+        // Get a handle for the file
         const fileHandle = await directoryHandle.getFileHandle(fileName, { create: true });
+        
+        // Write to the file
         const writable = await fileHandle.createWritable();
         await writable.write(blob);
         await writable.close();
+        
         console.log(`Photo saved to ${fileName}`);
       } catch (error) {
         console.error('Failed to save photo to directory:', error);
       }
     } else {
-      // Fallback: Download the file using a link
-      const formattedTimestamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0];
-      const fileName = `sitsmart_${user_id}_${formattedTimestamp}.png`;
-
-      const link = document.createElement("a");
+      console.warn('Directory handle not set, using fallback download.');
+      const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = fileName;
+      link.download = `sitsmart_${user_id}_${formattedTimestamp}.png`;
       link.click();
     }
   };
+  
 
   const handleCameraError = (error) => {
     if (error.name === 'NotAllowedError') {
