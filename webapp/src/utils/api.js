@@ -69,3 +69,21 @@ export const removeUser = async (userId) => {
     throw error;
   }
 };
+
+// 5. Send the directory path to the backend
+export const updateUserDirectory = async (userId, directoryPath) => {
+  try {
+    const response = await fetch(`${BASE_URL}/sitsmart/api/update_directory/${userId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ directoryPath }),
+    });
+    const data = await response.json();
+    console.log(data.message);
+  } catch (error) {
+    console.error('Error updating directory:', error);
+    throw error;
+  }
+};
