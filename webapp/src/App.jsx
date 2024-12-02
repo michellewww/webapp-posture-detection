@@ -11,6 +11,7 @@ const App = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [notificationFrequency, setNotificationFrequency] = useState(45);
   const [activeUser, setActiveUser] = useState(false);
+  const [directoryHandle, setDirectoryHandle] = useState(null);
   const userId = "user123";
 
   // notification for bad posture
@@ -51,6 +52,7 @@ const App = () => {
           setPostureType={setPostureType}
           activeUser={activeUser}
           setActiveUser={setActiveUser}
+          directoryHandle={directoryHandle}
         />;
       case 'settings':
         return <SettingsPage
@@ -58,11 +60,12 @@ const App = () => {
           setNotificationsEnabled={setNotificationsEnabled}
           notificationFrequency={notificationFrequency}
           setNotificationFrequency={setNotificationFrequency}
+          directoryHandle={directoryHandle} setDirectoryHandle={setDirectoryHandle}
         />;
       case 'analysis':
         return <AnalysisPage />;
       default:
-        return <CameraPage />;
+        return <CameraPage directoryHandle={directoryHandle} />;
     }
   };
 
@@ -79,6 +82,7 @@ const App = () => {
         postureType={postureType}
         setPostureType={setPostureType}
         notificationsEnabled={notificationsEnabled}
+        directoryHandle={directoryHandle} setDirectoryHandle={setDirectoryHandle}
       />
     </div>
   );

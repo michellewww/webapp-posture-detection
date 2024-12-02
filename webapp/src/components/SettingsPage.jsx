@@ -6,9 +6,31 @@ const SettingsPage = ({
   setNotificationsEnabled,
   notificationFrequency,
   setNotificationFrequency,
+  directoryHandle, setDirectoryHandle
 }) => {
   const toggleNotifications = (enabled) => {
     setNotificationsEnabled(enabled);
+  };
+
+  const selectDirectory = async () => {
+    if ('showDirectoryPicker' in window) {
+      try {
+        const dirHandle = await window.showDirectoryPicker();
+        const permission = await dirHandle.queryPermission({ mode: 'readwrite' });
+        if (permission !== 'granted') {
+          const requestPermission = await dirHandle.requestPermission({ mode: 'readwrite' });
+          if (requestPermission !== 'granted') {
+            throw new Error('Write permission not granted');
+          }
+        }
+        setDirectoryHandle(dirHandle);
+        console.log('Directory selected:', dirHandle);
+      } catch (error) {
+        console.error('Directory selection cancelled or failed:', error);
+      }
+    } else {
+      alert('Your browser does not support the File System Access API. Please use a compatible browser.');
+    }
   };
 
   const handleFrequencyChange = async (event) => {
@@ -25,6 +47,11 @@ const SettingsPage = ({
     <div className='ml-10 mt-10'>
       <h2 className="text-2xl font-bold text-[#2a6f6f]">Settings</h2>
       <div className="mt-4 text-[#2a6f6f]">
+        <h3 className="font-semibold">Save Directory</h3>
+          <button onClick={selectDirectory} className="px-4 py-2 rounded bg-blue-500 text-white">
+            {directoryHandle ? 'Change Directory' : 'Select Directory'}
+          </button>
+          {directoryHandle && <span> Directory Selected</span>}
         <h3 className="font-semibold">Notifications</h3>
         <label>
           <input

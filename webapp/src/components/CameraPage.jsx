@@ -6,11 +6,12 @@ const CameraPage = ({
   setPostureType,
   activeUser,
   setActiveUser,
+  directoryHandle
  
 }) => {
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [status, setStatus] = useState(false); // For status indicator toggle
-  const [directoryHandle, setDirectoryHandle] = useState(null);
+ 
   const videoRef = useRef(null);
   const CAPTURE_INTERVAL = 5000; // Interval for capturing photos
   let videoStream = null;
@@ -93,37 +94,28 @@ const CameraPage = ({
 
   const captureAndStorePhoto = async () => {
     if (!videoRef.current || !videoRef.current.srcObject) return;
-  
+
     const canvas = document.createElement('canvas');
-    canvas.width = 320; // Adjust width
-    canvas.height = 240; // Adjust height
+    canvas.width = 320;
+    canvas.height = 240;
     const context = canvas.getContext('2d');
     context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
     const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
-  
+
     if (directoryHandle) {
       try {
         const formattedTimestamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0];
         const fileName = `sitsmart_${user_id}_${formattedTimestamp}.png`;
-        
-        // Get a handle for the file
         const fileHandle = await directoryHandle.getFileHandle(fileName, { create: true });
-        
-        // Write to the file
         const writable = await fileHandle.createWritable();
         await writable.write(blob);
         await writable.close();
-        
         console.log(`Photo saved to ${fileName}`);
       } catch (error) {
         console.error('Failed to save photo to directory:', error);
       }
     } else {
-      console.warn('Directory handle not set, using fallback download.');
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `sitsmart_${user_id}_${formattedTimestamp}.png`;
-      link.click();
+      console.warn('Directory handle not set.');
     }
   };
   
@@ -172,7 +164,7 @@ const CameraPage = ({
       </div>
 
       {/* Directory Selection */}
-      <div className="flex items-center gap-4">
+      {/* <div className="flex items-center gap-4">
         <button
           onClick={selectDirectory}
           className={`px-4 py-2 rounded bg-blue-500 text-white`}
@@ -180,7 +172,7 @@ const CameraPage = ({
           {directoryHandle ? 'Change Directory' : 'Select Directory'}
         </button>
         {directoryHandle && <span>Directory Selected</span>}
-      </div>
+      </div> */}
 
       {/* Control Buttons */}
       <div className="flex gap-4">
