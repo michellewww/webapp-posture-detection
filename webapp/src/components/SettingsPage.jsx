@@ -6,7 +6,8 @@ const SettingsPage = ({
   setNotificationsEnabled,
   notificationFrequency,
   setNotificationFrequency,
-  directoryHandle, setDirectoryHandle
+  directoryHandle, 
+  setDirectoryHandle
 }) => {
   const toggleNotifications = (enabled) => {
     setNotificationsEnabled(enabled);
@@ -48,20 +49,24 @@ const SettingsPage = ({
       <h2 className="text-2xl font-bold text-[#2a6f6f]">Settings</h2>
       <div className="mt-4 text-[#2a6f6f]">
         <h3 className="font-semibold">Save Directory</h3>
-          <button onClick={selectDirectory} className="px-4 py-2 rounded bg-blue-500 text-white">
+          <button onClick={selectDirectory} className="mt-2 px-4 py-2 rounded bg-[#a8c3b5] text-white">
             {directoryHandle ? 'Change Directory' : 'Select Directory'}
           </button>
-          {directoryHandle && <span> Directory Selected</span>}
+          {directoryHandle && <span> {directoryHandle.name} </span>}
+      </div>
+      <div className="mt-4 text-[#2a6f6f]">
         <h3 className="font-semibold">Notifications</h3>
         <label>
-          <input
-            type="checkbox"
-            checked={notificationsEnabled}
-            onChange={(e) => toggleNotifications(e.target.checked)}
-          />
-          <span className='ml-2'>
-            Enable Notifications
-          </span>
+          <div className='mt-2'>
+            <input
+              type="checkbox"
+              checked={notificationsEnabled}
+              onChange={(e) => toggleNotifications(e.target.checked)}
+            />
+            <span className='ml-2'>
+              Enable Notifications
+            </span>
+          </div>
         </label>
         {notificationsEnabled && (
           <div>

@@ -60,7 +60,8 @@ const App = () => {
           setNotificationsEnabled={setNotificationsEnabled}
           notificationFrequency={notificationFrequency}
           setNotificationFrequency={setNotificationFrequency}
-          directoryHandle={directoryHandle} setDirectoryHandle={setDirectoryHandle}
+          directoryHandle={directoryHandle} 
+          setDirectoryHandle={setDirectoryHandle}
         />;
       case 'analysis':
         return <AnalysisPage />;
