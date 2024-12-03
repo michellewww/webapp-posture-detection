@@ -57,19 +57,24 @@ const SettingsPage = ({
       <div className="mt-4 text-[#2a6f6f]">
         <h3 className="font-semibold">Notifications</h3>
         <label>
-          <div className='mt-2'>
-            <input
-              type="checkbox"
-              checked={notificationsEnabled}
-              onChange={(e) => toggleNotifications(e.target.checked)}
-            />
-            <span className='ml-2'>
+          <div className='mt-2 flex items-center gap-4'>
+            <span >
               Enable Notifications
             </span>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={notificationsEnabled}
+                onChange={(e) => toggleNotifications(e.target.checked)}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:bg-[#a8c3b5] transition duration-300"></div>
+              <div className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-5 transition-transform"></div>
+            </label>
           </div>
         </label>
         {notificationsEnabled && (
-          <div>
+          <div className='mt-2 flex gap-4 items-center'>
             <label htmlFor="notification-frequency">Notification Frequency:</label>
             <select
               id="notification-frequency"
