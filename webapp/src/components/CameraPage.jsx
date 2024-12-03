@@ -118,8 +118,8 @@ const CameraPage = ({
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen space-y-6 bg-gray-100 text-[#2a6f6f]">
-      <h1 className="text-2xl font-bold">Posture Detection App</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen space-y-6 bg-[#F8F6F7] text-[#2a6f6f]">
+      <h1 className="text-3xl font-bold">SitSmart: Your Posture Partner</h1>
 
       {/* Status Indicator */}
       <div className="flex items-center gap-4">
@@ -146,7 +146,7 @@ const CameraPage = ({
     
 
       {/* Control Buttons */}
-      <div className="flex gap-4">
+      <div className="flex gap-4 font-semibold">
         <button
           onClick={startCamera}
           className={`px-4 py-2 rounded ${

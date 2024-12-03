@@ -79,6 +79,10 @@ const SettingsPage = ({
               <option value={45}>Every 45 seconds</option>
               <option value={60}>Every 1 minute</option>
               <option value={300}>Every 5 minutes</option>
+              <option value={600}>Every 10 minutes</option>
+              <option value={900}>Every 15 minutes</option>
+              <option value={1200}>Every 20 minutes</option>
+              <option value={1500}>Every 25 minutes</option>
               <option value={1800}>Every 30 minutes</option>
             </select>
           </div>

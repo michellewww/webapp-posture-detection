@@ -76,7 +76,7 @@ const App = () => {
       <Sidebar showPage={setCurrentPage} />
       
       {/* Main Content */}
-      <main className="flex-1 p-5 bg-gray-100 overflow-auto">{renderPage()}</main>
+      <main className="flex-1 px-5 bg-[#F8F6F7] overflow-auto">{renderPage()}</main>
       
       {/* Floating App */}
       <FloatingApp
