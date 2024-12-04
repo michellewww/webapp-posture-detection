@@ -53,6 +53,7 @@ const App = () => {
           activeUser={activeUser}
           setActiveUser={setActiveUser}
           directoryHandle={directoryHandle}
+          setDirectoryHandle={setDirectoryHandle}
         />;
       case 'settings':
         return <SettingsPage

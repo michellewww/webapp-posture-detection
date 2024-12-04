@@ -6,11 +6,12 @@ const CameraPage = ({
   setPostureType,
   activeUser,
   setActiveUser,
-  directoryHandle
- 
+  directoryHandle,
+  setDirectoryHandle,
 }) => {
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [status, setStatus] = useState(false); // For status indicator toggle
+  const [openPopup, setOpenPopup] = useState(false);
  
   const videoRef = useRef(null);
   const CAPTURE_INTERVAL = 5000; // Interval for capturing photos
@@ -23,6 +24,12 @@ const CameraPage = ({
   /* Web Camera */
   const startCamera = async () => {
     if (isCameraActive) return;
+    
+    if (!directoryHandle) {
+      // Open popup to redirect to setting page
+      setOpenPopup(true);
+      return;
+    }
 
     try {
       videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -99,7 +106,6 @@ const CameraPage = ({
     }
   };
   
-
   const handleCameraError = (error) => {
     if (error.name === 'NotAllowedError') {
       alert('Camera access was denied. Please enable camera access.');
@@ -110,6 +116,29 @@ const CameraPage = ({
     }
   };
 
+  const selectDirectory = async () => {
+    if ('showDirectoryPicker' in window) {
+      try {
+        const dirHandle = await window.showDirectoryPicker();
+        const permission = await dirHandle.queryPermission({ mode: 'readwrite' });
+        if (permission !== 'granted') {
+          const requestPermission = await dirHandle.requestPermission({ mode: 'readwrite' });
+          if (requestPermission !== 'granted') {
+            throw new Error('Write permission not granted');
+          }
+        }
+        setDirectoryHandle(dirHandle);
+        setOpenPopup(false);
+        console.log('Directory selected:', dirHandle);
+      } catch (error) {
+        console.error('Directory selection cancelled or failed:', error);
+      }
+    } else {
+      alert('Your browser does not support the File System Access API. Please use a compatible browser.');
+    }
+    setOpenPopup(false);
+  };
+
   // Clean up on unmount
   useEffect(() => {
     return () => {
@@ -118,54 +147,70 @@ const CameraPage = ({
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen space-y-6 bg-[#F8F6F7] text-[#2a6f6f]">
-      <h1 className="text-3xl font-bold">SitSmart: Your Posture Partner</h1>
+    <div>
+      <div className="flex flex-col items-center justify-center min-h-screen space-y-6 bg-[#F8F6F7] text-[#2a6f6f]">
+        <h1 className="text-3xl font-bold">SitSmart: Your Posture Partner</h1>
 
-      {/* Status Indicator */}
-      <div className="flex items-center gap-4">
-        <h5 className="text-lg font-semibold">Status Indicator</h5>
-        <label className="relative inline-flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            checked={status}
-            onChange={() => setStatus(!status)}
-            className="sr-only peer"
-          />
-          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:bg-[#a8c3b5] transition duration-300"></div>
-          <div className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-5 transition-transform"></div>
-        </label>
-      </div>
+        {/* Status Indicator */}
+        <div className="flex items-center gap-4">
+          <h5 className="text-lg font-semibold">Status Indicator</h5>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={status}
+              onChange={() => setStatus(!status)}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:bg-[#a8c3b5] transition duration-300"></div>
+            <div className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-5 transition-transform"></div>
+          </label>
+        </div>
 
-      {/* Video Container */}
-      <div
-        className="w-[640px] h-[480px] border-2 border-gray-300 rounded-lg flex items-center justify-center bg-white"
-      >
-        <video ref={videoRef} className="w-full h-full rounded-lg" autoPlay playsInline />
-      </div>
-
-    
-
-      {/* Control Buttons */}
-      <div className="flex gap-4 font-semibold">
-        <button
-          onClick={startCamera}
-          className={`px-4 py-2 rounded ${
-            isCameraActive ? 'bg-[#e0e2e4] cursor-not-allowed' : 'bg-[#a8c3b5] text-white'
-          }`}
-          disabled={isCameraActive}
+        {/* Video Container */}
+        <div
+          className="w-[640px] h-[480px] border-2 border-gray-300 rounded-lg flex items-center justify-center bg-white"
         >
-          Start Camera
-        </button>
-        <button
-          onClick={stopCamera}
-          className={`px-4 py-2 rounded ${
-            !isCameraActive ? 'bg-[#e0e2e4] cursor-not-allowed' : 'bg-red-500 text-white'
-          }`}
-          disabled={!isCameraActive}
-        >
-          Stop Camera
-        </button>
+          <video ref={videoRef} className="w-full h-full rounded-lg" autoPlay playsInline />
+        </div>
+
+        {/* Control Buttons */}
+        <div className="flex gap-4 font-semibold">
+          <button
+            onClick={startCamera}
+            className={`px-4 py-2 rounded ${
+              isCameraActive ? 'bg-[#e0e2e4] cursor-not-allowed' : 'bg-[#a8c3b5] text-white'
+            }`}
+            disabled={isCameraActive}
+          >
+            Start Camera
+          </button>
+          <button
+            onClick={stopCamera}
+            className={`px-4 py-2 rounded ${
+              !isCameraActive ? 'bg-[#e0e2e4] cursor-not-allowed' : 'bg-red-500 text-white'
+            }`}
+            disabled={!isCameraActive}
+          >
+            Stop Camera
+          </button>
+        </div>
       </div>
+
+      {/* Popup Modal */}
+      {openPopup && (
+        <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h2 className="text-2xl font-semibold mb-4">Directory Not Selected</h2>
+            <p className="mb-6">Please select a directory to save your captured photos.</p>
+            <button
+              onClick={selectDirectory}
+              className="px-4 py-2 bg-[#a8c3b5] text-white font-semibold rounded"
+            >
+              Select Directory
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
