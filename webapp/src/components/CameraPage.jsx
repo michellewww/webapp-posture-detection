@@ -139,13 +139,6 @@ const CameraPage = ({
     setOpenPopup(false);
   };
 
-  // Clean up on unmount
-  useEffect(() => {
-    return () => {
-      stopCamera();
-    };
-  }, []);
-
   return (
     <div>
       <div className="flex flex-col items-center justify-center min-h-screen space-y-6 bg-[#F8F6F7] text-[#2a6f6f]">
