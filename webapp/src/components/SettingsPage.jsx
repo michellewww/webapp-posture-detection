@@ -45,19 +45,19 @@ const SettingsPage = ({
   };
 
   return (
-    <div className='flex flex-col items-center mt-10'>
-      <h2 className="text-2xl font-bold text-[#2a6f6f]">Settings</h2>
-      <div className="mt-4 text-[#2a6f6f]">
-        <h3 className="font-semibold">Save Directory</h3>
+    <div className='flex flex-col items-center mt-20 space-y-6'>
+      <h2 className="text-2xl font-bold text-[#2a6f6f] text-center">Settings</h2>
+      <div className="text-[#2a6f6f] text-center">
+        <h3 className="mt-10 font-semibold">Save Directory</h3>
         <button onClick={selectDirectory} className="mt-2 px-4 py-2 rounded bg-[#a8c3b5] text-white">
           {directoryHandle ? 'Change Directory' : 'Select Directory'}
         </button>
         {directoryHandle && <span> {directoryHandle.name} </span>}
       </div>
-      <div className="mt-4 text-[#2a6f6f]">
-        <h3 className="font-semibold">Notifications</h3>
+      <div className="text-[#2a6f6f] text-center">
+        <h3 className="mt-10 font-semibold">Notifications</h3>
         <label>
-          <div className='mt-2 flex items-center gap-4'>
+          <div className='mt-2 flex items-center gap-4 justify-center'>
             <span>Enable Notifications</span>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
@@ -72,7 +72,7 @@ const SettingsPage = ({
           </div>
         </label>
         {notificationsEnabled && (
-          <div className='mt-2 flex gap-4 items-center'>
+          <div className='mt-2 flex gap-4 items-center justify-center'>
             <label htmlFor="notification-frequency">Notification Frequency:</label>
             <select
               id="notification-frequency"
