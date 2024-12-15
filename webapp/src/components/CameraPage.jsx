@@ -8,9 +8,10 @@ const CameraPage = ({
   setActiveUser,
   directoryHandle,
   setDirectoryHandle,
+  status, 
+  setStatus,
 }) => {
   const [isCameraActive, setIsCameraActive] = useState(false);
-  const [status, setStatus] = useState(false); // For status indicator toggle
   const [openPopup, setOpenPopup] = useState(false);
  
   const videoRef = useRef(null);
@@ -161,7 +162,11 @@ const CameraPage = ({
 
         {/* Video Container */}
         <div
-          className="w-[640px] h-[480px] border-2 border-gray-300 rounded-lg flex items-center justify-center bg-white"
+          className={`w-[640px] h-[480px] border-2 ${
+            postureType === "lean_forward" || postureType === "lean_backward"
+              ? "border-[#ffa500]"
+              : "border-gray-300"
+          } rounded-lg flex items-center justify-center bg-white`}
         >
           <video ref={videoRef} className="w-full h-full rounded-lg" autoPlay playsInline />
         </div>

@@ -6,6 +6,7 @@ import AnalysisPage from './components/AnalysisPage';
 import FloatingApp from './components/FloatingApp';
 import { getStatus } from './utils/api';
 import { updateFaviconColors } from './utils/favicon';
+import { addPostureEntry } from './utils/indexDB';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('camera');
@@ -19,6 +20,8 @@ const App = () => {
 
   // notification for bad posture
   const [postureType, setPostureType] = useState('normal');
+  // user choose to enable notification
+  const [status, setStatus] = useState(true); // For status indicator toggle
 
   // Fetch posture status at regular intervals
   useEffect(() => {
@@ -26,23 +29,30 @@ const App = () => {
 
     const fetchStatus = async () => {
       try {
-        const status = await getStatus(userId);
-        setPostureType(status); // Update postureType based on API response
+        const status = await getStatus(userId); // Fetch posture status
+        setPostureType(status);
+        console.log('Posture status:', status);
+
+        // Add the status to the database if it's valid
+        const timestamp = Date.now();
+        await addPostureEntry(timestamp, status);
       } catch (error) {
         console.error('Error fetching posture status:', error);
       }
     };
 
-    if (notificationsEnabled && activeUser) {
-      // Start fetching status at the specified interval
-      fetchStatus(); // Fetch immediately
-      intervalId = setInterval(fetchStatus, notificationFrequency * 1000); // Convert seconds to milliseconds
-    }
+    const initializeApp = () => {
+      if (notificationsEnabled && activeUser) {
+        fetchStatus(); // Fetch immediately
+        intervalId = setInterval(fetchStatus, notificationFrequency * 1000); // Fetch at intervals
+      }
+    };
+
+    initializeApp();
 
     return () => {
-      // Cleanup: Clear the interval when notifications are disabled or the component is unmounted
       if (intervalId) {
-        clearInterval(intervalId);
+        clearInterval(intervalId); // Cleanup interval on unmount
       }
     };
   }, [notificationsEnabled, notificationFrequency, userId, activeUser]);
@@ -66,6 +76,8 @@ const App = () => {
           setActiveUser={setActiveUser}
           directoryHandle={directoryHandle}
           setDirectoryHandle={setDirectoryHandle}
+          status={status}
+          setStatus={setStatus}
         />;
       case 'settings':
         return <SettingsPage
@@ -75,6 +87,8 @@ const App = () => {
           setNotificationFrequency={setNotificationFrequency}
           directoryHandle={directoryHandle} 
           setDirectoryHandle={setDirectoryHandle}
+          status={status}
+          setStatus={setStatus}
         />;
       case 'analysis':
         return <AnalysisPage />;
