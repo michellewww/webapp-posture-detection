@@ -5,6 +5,7 @@ import SettingsPage from './components/SettingsPage';
 import AnalysisPage from './components/AnalysisPage';
 import FloatingApp from './components/FloatingApp';
 import { getStatus } from './utils/api';
+import { updateFaviconColors } from './utils/favicon';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('camera');
@@ -13,9 +14,11 @@ const App = () => {
   const [activeUser, setActiveUser] = useState(false);
   const [directoryHandle, setDirectoryHandle] = useState(null);
   const userId = "user123";
+  const good_color = '#608a75';
+  const bad_color = '#ffa500';
 
   // notification for bad posture
-  const [postureType, setPostureType] = useState('good');
+  const [postureType, setPostureType] = useState('normal');
 
   // Fetch posture status at regular intervals
   useEffect(() => {
@@ -43,6 +46,15 @@ const App = () => {
       }
     };
   }, [notificationsEnabled, notificationFrequency, userId, activeUser]);
+
+  // Update favicon color based on postureType
+  useEffect(() => {
+    if (postureType === 'lean_forward' || postureType === 'lean_backward') {
+      updateFaviconColors(bad_color);
+    } else {
+      updateFaviconColors(good_color);
+    }
+  }, [postureType]);
 
   const renderPage = () => {
     switch (currentPage) {
