@@ -11,22 +11,41 @@
       background-color: transparent;
       -webkit-app-region: drag; /* Makes the entire window draggable */
     }
+
     #status-icon {
       width: 50px;
       height: 50px;
       position: fixed;
       top: 10px;
-      right: 10px;
+      right: 50px; /* Adjusted to make room for the three-dot menu */
       cursor: pointer;
       -webkit-app-region: drag; /* Prevents icon from being draggable */
-      /* make it visible on top of other windows */
-      z-index: 100;
-      display: block;
+      z-index: 100; /* Ensure it is on top */
     }
+
+    #three-dot-menu {
+      width: 20px;
+      height: 20px;
+      position: fixed;
+      top: 15px; /* Adjusted alignment with the status icon */
+      right: 15px; /* Positioned at the top-right corner */
+      cursor: pointer;
+      background: black;
+      border-radius: 50%;
+      -webkit-app-region: no-drag; /* Prevents the menu from being draggable */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      z-index: 200; /* Higher z-index to appear above other elements */
+    }
+
     #menu {
       display: none;
       position: fixed;
-      top: 60px;
+      top: 40px;
       right: 10px;
       padding: 10px;
       background-color: white;
@@ -34,19 +53,22 @@
       border-radius: 5px;
       font-size: 14px;
       -webkit-app-region: no-drag; /* Prevents menu from being draggable */
+      z-index: 150;
     }
+
     #menu button {
       border: none;
       background: none;
       cursor: pointer;
-      color: blue;
+      color: red;
     }
   </style>
 </head>
 <body>
   <img id="status-icon" src="good-face.png" alt="Status Icon" />
+  <div id="three-dot-menu">⋮</div>
   <div id="menu">
-    <button id="hide-button">Hide</button>
+    <button id="close-button">Close</button>
   </div>
 
   <!-- Link to external JavaScript file -->
