@@ -7,7 +7,9 @@ const SettingsPage = ({
   notificationFrequency,
   setNotificationFrequency,
   directoryHandle, 
-  setDirectoryHandle
+  setDirectoryHandle,
+  status,
+  setStatus,
 }) => {
   const toggleNotifications = (enabled) => {
     setNotificationsEnabled(enabled);
@@ -36,11 +38,11 @@ const SettingsPage = ({
 
   const handleFrequencyChange = async (event) => {
     const selectedValue = parseInt(event.target.value, 10);
-    try {
-      await setIntervalForUser('user123', selectedValue);
-    } catch (error) {
-      console.error('Error setting interval for user:', error);
-    }
+    // try {
+    //   await setIntervalForUser('user123', selectedValue);
+    // } catch (error) {
+    //   console.error('Error setting interval for user:', error);
+    // }
     setNotificationFrequency(selectedValue); // Update frequency in seconds
   };
 
@@ -53,6 +55,26 @@ const SettingsPage = ({
             {directoryHandle ? 'Change Directory' : 'Select Directory'}
           </button>
           {directoryHandle && <span> {directoryHandle.name} </span>}
+      </div>
+      <div className="mt-4 text-[#2a6f6f]">
+        <h3 className="font-semibold">Status Indicator</h3>
+        <label>
+          <div className='mt-2 flex items-center gap-4'>
+            <span >
+              Enable Indicator
+            </span>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={status}
+                onChange={(e) => setStatus(e.target.checked)}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:bg-[#a8c3b5] transition duration-300"></div>
+              <div className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-5 transition-transform"></div>
+            </label>
+          </div>
+        </label>
       </div>
       <div className="mt-4 text-[#2a6f6f]">
         <h3 className="font-semibold">Notifications</h3>
