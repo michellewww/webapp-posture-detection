@@ -117,8 +117,8 @@ const App = () => {
         directoryHandle={directoryHandle} setDirectoryHandle={setDirectoryHandle}
       /> */}
 
-  {/* Sample Data Inserter */}
-      {isDevelopment && <SampleDataInserter />}
+  {/* Sample Data Inserter
+      {isDevelopment && <SampleDataInserter />} */}
 
     </div>
   );
