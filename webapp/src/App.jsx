@@ -19,6 +19,7 @@ const App = () => {
   const bad_color = '#ffa500';
 
   // notification for bad posture
+  //normal, lean_forward, lean_backward, Unknown, None
   const [postureType, setPostureType] = useState('normal');
   // user choose to enable notification
   const [status, setStatus] = useState(true); // For status indicator toggle

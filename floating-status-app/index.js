@@ -1,10 +1,9 @@
-const { app, BrowserWindow, ipcMain, screen } = require('electron');
-const path = require('path');
+const { app, BrowserWindow, ipcMain } = require('electron');
 
 let floatingWindow;
 
 app.on('ready', () => {
-  const { width } = screen.getPrimaryDisplay().workAreaSize;
+  console.log("Main process: Electron app is ready.");
 
   floatingWindow = new BrowserWindow({
     width: 100,
@@ -16,22 +15,26 @@ app.on('ready', () => {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-      enableRemoteModule: true,  // Enabling remote module for more flexible access
+      enableRemoteModule: true,
     },
   });
 
-  floatingWindow.loadFile(path.join(__dirname, 'floating.html'));
-  const padding = 10;
-  floatingWindow.setPosition(width - 150 - padding, padding);
-});
+  // Log that we're loading the floating window
+  console.log("Main process: Loading floating window.");
 
-// Close all windows on receiving the event
-ipcMain.on('close-all-windows', () => {
-  app.quit();
-});
+  floatingWindow.loadURL('http://localhost:3005/floating.html');
+  
+  // Log after the window is loaded
+  floatingWindow.webContents.once('did-finish-load', () => {
+    console.log("Main process: Floating window loaded.");
+  });
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+  //TODO: Remove this line before production
+  floatingWindow.webContents.openDevTools();
+
+  // Handle close all windows event
+  ipcMain.on('close-all-windows', () => {
+    console.log("Main process: Closing all windows.");
+    floatingWindow.close();  // Close the floating window
+  });
 });
