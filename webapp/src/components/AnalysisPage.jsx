@@ -129,9 +129,6 @@ const PostureAnalysis = () => {
       const entry = filteredData[i];
       const total = entry.goodPosture + entry.badPosture;
       const goodPercentage = total > 0 ? (entry.goodPosture / total) * 100 : 0;
-      console.log(i)
-      // console.log(entry)
-      // console.log(goodPercentage)
   
       if (goodPercentage >= percentageThreshold) {
         recentStreak++;
