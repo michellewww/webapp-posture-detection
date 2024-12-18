@@ -56,7 +56,7 @@ const SettingsPage = ({
           </button>
           {directoryHandle && <span> {directoryHandle.name} </span>}
       </div>
-      <div className="mt-4 text-[#2a6f6f]">
+      {/* <div className="mt-4 text-[#2a6f6f]">
         <h3 className="font-semibold">Status Indicator</h3>
         <label>
           <div className='mt-2 flex items-center gap-4'>
@@ -75,7 +75,7 @@ const SettingsPage = ({
             </label>
           </div>
         </label>
-      </div>
+      </div> */}
       <div className="mt-4 text-[#2a6f6f]">
         <h3 className="font-semibold">Notifications</h3>
         <label>
