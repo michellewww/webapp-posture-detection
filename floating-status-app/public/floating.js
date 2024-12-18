@@ -97,7 +97,7 @@ const setIconVisibility = async (userId, visibility) => {
 
 // Function to fetch icon visibility status
 const fetchIconVisibility = async () => {
-  console.log("Renderer process: Fetching icon visibility...");
+  // console.log("Renderer process: Fetching icon visibility...");
   const url = `http://127.0.0.1:5000/sitsmart/api/icon_visibility/${userId}`;
 
   try {
@@ -105,7 +105,7 @@ const fetchIconVisibility = async () => {
     const data = await response.json();
     const visibility = data.icon_visibility; // Extract visibility status
 
-    console.log(`Renderer process: Icon visibility fetched: ${visibility}`);
+    // console.log(`Renderer process: Icon visibility fetched: ${visibility}`);
     ipcRenderer.send('update-window-visibility', visibility); // Notify main process
   } catch (error) {
     console.error("Renderer process: Error fetching icon visibility:", error);
@@ -115,7 +115,7 @@ const fetchIconVisibility = async () => {
 // Monitor visibility frequently (every 1 second)
 const monitorVisibility = () => {
   setInterval(() => {
-    console.log("Renderer process: Checking icon visibility...");
+    // console.log("Renderer process: Checking icon visibility...");
     fetchIconVisibility();
   }, 1000); // Polling every second
 };
