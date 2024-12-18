@@ -7,6 +7,7 @@ import FloatingApp from './components/FloatingApp';
 import { getStatus } from './utils/api';
 import { updateFaviconColors } from './utils/favicon';
 import { addPostureEntry } from './utils/indexDB';
+import SampleDataInserter from './components/SampleDataInserter';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('camera');
@@ -17,6 +18,8 @@ const App = () => {
   const userId = "user123";
   const good_color = '#608a75';
   const bad_color = '#ffa500';
+  const isDevelopment = process.env.NODE_ENV === 'development';
+
 
   // notification for bad posture
   //normal, lean_forward, lean_backward, Unknown, None
@@ -113,6 +116,10 @@ const App = () => {
         notificationsEnabled={notificationsEnabled}
         directoryHandle={directoryHandle} setDirectoryHandle={setDirectoryHandle}
       /> */}
+
+  {/* Sample Data Inserter */}
+      {isDevelopment && <SampleDataInserter />}
+
     </div>
   );
 };
