@@ -19,13 +19,15 @@ const CameraPage = ({
   let videoStream = null;
   let captureInterval = null;
 
+  // TODO: change this save logic
   const user_id = "user123";
 
   /* Web Camera */
   const startCamera = async () => {
     if (isCameraActive) return;
-
+    
     if (!directoryHandle) {
+      // Open popup to redirect to setting page
       setOpenPopup(true);
       return;
     }
@@ -39,12 +41,13 @@ const CameraPage = ({
       setIsCameraActive(true);
 
       try {
-        await addUser(user_id);
+        await addUser(user_id); // Add user to the database
       } catch (error) {
         console.error('Failed to add user:', error);
       }
-      setActiveUser(true);
+      setActiveUser(true); // Set active user
 
+      // Set an interval to capture photos
       captureInterval = setInterval(() => {
         captureAndStorePhoto();
       }, CAPTURE_INTERVAL);
@@ -66,13 +69,16 @@ const CameraPage = ({
       captureInterval = null;
     }
     try {
-      await removeUser(user_id);
+      await removeUser(user_id); // Remove user from the database
     } catch (error) {
       console.error('Failed to remove user:', error);
     }
-    setActiveUser(false);
+    setActiveUser(false); // Set active user
     setIsCameraActive(false);
   };
+
+  
+  
 
   const captureAndStorePhoto = async () => {
     if (!videoRef.current || !videoRef.current.srcObject) return;
@@ -123,6 +129,29 @@ const CameraPage = ({
     } catch (error) {
       console.error('Error updating icon visibility:', error);
     }
+  };
+
+  const selectDirectory = async () => {
+    if ('showDirectoryPicker' in window) {
+      try {
+        const dirHandle = await window.showDirectoryPicker();
+        const permission = await dirHandle.queryPermission({ mode: 'readwrite' });
+        if (permission !== 'granted') {
+          const requestPermission = await dirHandle.requestPermission({ mode: 'readwrite' });
+          if (requestPermission !== 'granted') {
+            throw new Error('Write permission not granted');
+          }
+        }
+        setDirectoryHandle(dirHandle);
+        setOpenPopup(false);
+        console.log('Directory selected:', dirHandle);
+      } catch (error) {
+        console.error('Directory selection cancelled or failed:', error);
+      }
+    } else {
+      alert('Your browser does not support the File System Access API. Please use a compatible browser.');
+    }
+    setOpenPopup(false);
   };
 
   return (
@@ -178,6 +207,22 @@ const CameraPage = ({
           </button>
         </div>
       </div>
+
+      {/* Popup Modal */}
+      {openPopup && (
+        <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h2 className="text-2xl font-semibold mb-4">Directory Not Selected</h2>
+            <p className="mb-6">Please select a directory to save your captured photos.</p>
+            <button
+              onClick={selectDirectory}
+              className="px-4 py-2 bg-[#a8c3b5] text-white font-semibold rounded"
+            >
+              Select Directory
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
