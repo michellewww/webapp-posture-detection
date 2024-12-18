@@ -12,7 +12,7 @@ import SampleDataInserter from './components/SampleDataInserter';
 const App = () => {
   const [currentPage, setCurrentPage] = useState('camera');
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [notificationFrequency, setNotificationFrequency] = useState(45);
+  const [notificationFrequency, setNotificationFrequency] = useState(15);
   const [activeUser, setActiveUser] = useState(false);
   const [directoryHandle, setDirectoryHandle] = useState(null);
   const userId = "user123";
