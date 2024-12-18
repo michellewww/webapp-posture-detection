@@ -27,7 +27,7 @@ threeDotMenu.addEventListener('click', () => {
 // Handle close button click
 closeButton.addEventListener('click', () => {
   console.log("Renderer process: Close button clicked.");
-  ipcRenderer.send('close-all-windows'); // Close the Electron window
+  setIconVisibility(userId, 'off') // Turn off icon visibility
 });
 
 // Function to set the interval for the user
@@ -77,6 +77,49 @@ const fetchPostureType = async () => {
   }
 };
 
+const setIconVisibility = async (userId, visibility) => {
+  const url = `http://127.0.0.1:5000/sitsmart/api/icon_visibility/${userId}`;
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ visibility }), // Send visibility as "on" or "off"
+    });
+
+    if (!response.ok) throw new Error('Failed to set icon visibility');
+    const data = await response.json();
+    return data.message; // Return success message
+  } catch (error) {
+    console.error('Error setting icon visibility:', error);
+    throw error;
+  }
+};
+
+// Function to fetch icon visibility status
+const fetchIconVisibility = async () => {
+  console.log("Renderer process: Fetching icon visibility...");
+  const url = `http://127.0.0.1:5000/sitsmart/api/icon_visibility/${userId}`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    const visibility = data.icon_visibility; // Extract visibility status
+
+    console.log(`Renderer process: Icon visibility fetched: ${visibility}`);
+    ipcRenderer.send('update-window-visibility', visibility); // Notify main process
+  } catch (error) {
+    console.error("Renderer process: Error fetching icon visibility:", error);
+  }
+};
+
+// Monitor visibility frequently (every 1 second)
+const monitorVisibility = () => {
+  setInterval(() => {
+    console.log("Renderer process: Checking icon visibility...");
+    fetchIconVisibility();
+  }, 1000); // Polling every second
+};
+
 // Initialize the app
 const initialize = async () => {
   console.log("Renderer process: Initializing the floating app...");
@@ -84,8 +127,13 @@ const initialize = async () => {
   // Set interval to 15 seconds
   await setIntervalForUser();
 
-  // Fetch posture type immediately and then start interval
+  // Fetch posture type immediately
   fetchPostureType();
+
+  // Start frequent visibility monitoring
+  monitorVisibility();
+
+  // Periodically fetch posture type (15-second interval)
   setInterval(() => {
     console.log("Renderer process: Fetching posture type at 15-second interval.");
     fetchPostureType();

@@ -87,3 +87,21 @@ export const updateUserDirectory = async (userId, directoryPath) => {
     throw error;
   }
 };
+
+export const setIconVisibility = async (userId, visibility) => {
+  const url = `${BASE_URL}/sitsmart/api/icon_visibility/${userId}`;
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ visibility }), // Send visibility as "on" or "off"
+    });
+
+    if (!response.ok) throw new Error('Failed to set icon visibility');
+    const data = await response.json();
+    return data.message; // Return success message
+  } catch (error) {
+    console.error('Error setting icon visibility:', error);
+    throw error;
+  }
+};
