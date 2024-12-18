@@ -106,13 +106,13 @@ const App = () => {
       {/* Main Content */}
       <main className="flex-1 px-5 bg-[#F8F6F7] overflow-auto">{renderPage()}</main>
       
-      {/* Floating App */}
+      {/* Floating App
       <FloatingApp
         postureType={postureType}
         setPostureType={setPostureType}
         notificationsEnabled={notificationsEnabled}
         directoryHandle={directoryHandle} setDirectoryHandle={setDirectoryHandle}
-      />
+      /> */}
     </div>
   );
 };
