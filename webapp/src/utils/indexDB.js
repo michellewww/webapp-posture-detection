@@ -101,35 +101,65 @@ export const fetchPostureEntries = async (startTime, endTime) => {
 };
 
 /**
- * Generate sample posture data for testing purposes.
+* Generate sample posture data for testing purposes with controlled variability.
  *
- * @param {number} days - Number of past days to generate data for.
- * @param {number} entriesPerDay - Number of posture entries per day.
- * @returns {Array<{timestamp: number, postureType: string}>} - Array of sample posture entries.
+* @param {number} days - Number of past days to generate data for.
+* @param {number} entriesPerDay - Number of posture entries per day.
+* @returns {Array<{timestamp: number, postureType: string}>} - Array of sample posture entries.
  */
 export const generateSampleData = (days = 30, entriesPerDay = 1440) => {
   const postureTypes = ['normal', 'lean_forward', 'lean_backward'];
-  const postureProbabilities = [0.7, 0.15, 0.15]; // Weighted probabilities: 70% normal, 15% lean_forward, 15% lean_backward
   const sampleEntries = [];
   const now = Date.now();
 
-  // Helper function to select a posture type based on probabilities
-  const selectPostureType = () => {
-    const rand = Math.random();
-    let cumulativeProbability = 0;
-    for (let i = 0; i < postureTypes.length; i++) {
-      cumulativeProbability += postureProbabilities[i];
-      if (rand < cumulativeProbability) {
-        return postureTypes[i];
-      }
-    }
-  };
+  // Generate an array of bad posture percentages for the past 30 days
+  const badPosturePercentages = Array(days).fill(0);
 
+  // Ensure the most recent 4 days have bad posture percentage strictly below 30%
+  for (let day = 0; day < 4; day++) {
+    badPosturePercentages[day] = Math.random() * 0.3; // Random percentage between 0% and 30%
+  }
+
+  // Ensure a consecutive 7-day period has bad posture percentage strictly below 30%
+  const startOfLowBadPostureStreak = Math.floor(Math.random() * (days - 11)) + 4; // Avoid overlap with the first 4 days
+  for (let day = startOfLowBadPostureStreak; day < startOfLowBadPostureStreak + 7; day++) {
+    badPosturePercentages[day] = Math.random() * 0.3; // Random percentage between 0% and 30%
+  }
+
+  // For remaining days, assign random bad posture percentages with variability
+  for (let day = 0; day < days; day++) {
+    if (badPosturePercentages[day] === 0) {
+      const isLowBadPostureDay = Math.random() < 0.5; // 50% chance for low bad posture
+      badPosturePercentages[day] = isLowBadPostureDay
+        ? Math.random() * 0.3 // 0%-30%
+        : 0.3 + Math.random() * 0.4; // 30%-70%
+    }
+  }
+
+  // Generate posture entries based on the calculated percentages
   for (let day = 0; day < days; day++) {
     const dayTimestamp = now - day * 24 * 60 * 60 * 1000; // Subtract days
+
+    // Determine proportions based on bad posture percentage
+    const badPostureProportion = badPosturePercentages[day];
+    const normalProportion = 1 - badPostureProportion;
+    const leanForwardProportion = badPostureProportion / 2;
+    const leanBackwardProportion = badPostureProportion / 2;
+
     for (let entry = 0; entry < entriesPerDay; entry++) {
       const timestamp = dayTimestamp + entry * (24 * 60 * 60 * 1000) / entriesPerDay; // Distribute entries evenly over the day
-      const postureType = selectPostureType();
+
+      // Generate posture type based on weighted random selection
+      const randomValue = Math.random();
+      let postureType;
+      if (randomValue < normalProportion) {
+        postureType = 'normal';
+      } else if (randomValue < normalProportion + leanForwardProportion) {
+        postureType = 'lean_forward';
+      } else {
+        postureType = 'lean_backward';
+      }
+
       sampleEntries.push({ timestamp, postureType });
     }
   }
